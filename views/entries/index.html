@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>entries</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen m-0">
+    <!-- Colores: [#F23F3F] Rojo, [#09041C] Azul Oscuro, [#C23080] Violeta -->
+    <main class="flex flex-col items-center justify-center w-full h-full px-6 pt-4 pb-0 bg-gradient-to-br from-[#09041C] from-40% to-[#C23080]">
+        <!-- Modal para editar productos -->
+        <div id="edit-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
+            <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
+                <form id="edit-form" class="flex flex-col justify-center w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 gap-8 rounded-3xl bg-transparent transition-all">
+                    <div class="md:flex md:justify-center md:items-center w-full h-fit bg-transparent transition-all">
+                        <div class="flex flex-col md:flex-row md:flex-wrap md:items-center justify-center gap-x-4 px-6 mx-auto h-full md:h-fit w-full max-w-[25rem] md:max-w-[44rem] text-center">
+                            <p class="mb-8 w-full text-md md:text-lg font-semibold text-center text-white md:border-b-2 md:border-white">Editado por ultima vez el 02/12/2025</p>
+                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
+                                <input type="text" placeholder="" id="name0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
+                                <label for="name0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Nombre</label>
+                            </div>
+                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
+                                <input type="text" placeholder="" id="code0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
+                                <label for="code0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Codigo</label>
+                            </div>
+                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
+                                <input type="text" placeholder="" id="lot0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
+                                <label for="lot0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Lote</label>
+                            </div>
+                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
+                                <input type="text" placeholder="" id="manufacturer0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
+                                <label for="manufacturer0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Fabricante</label>
+                            </div>
+                            <div class="flex flex-row justify-between h-fit w-full md:max-w-[20rem] mb-6 pr-2 rounded-full bg-white text-[#09041C]">
+                                <div class="max-h-8 w-full">
+                                    <input type="number" placeholder="" id="quantity0" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
+                                    <label for="quantity0" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Cantidad</label>
+                                </div>
+                                <select id="select-unid" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center bg-transparent text-[#09041C]">
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Uni.">Uni.</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="N/A">N/A</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="kg">kg</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="g">g</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mg">mg</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lb">lb</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="oz">oz</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ton">ton</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lts">Lts</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ml">ml</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m³">m³</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm³">cm³</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m">m</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm">cm</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mm">mm</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ft">ft</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="in">in</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="paq">paq</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="doc">doc</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cajas">Cajas</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-row justify-between h-fit w-full md:max-w-[20rem] mb-6 pr-2 rounded-full bg-white text-[#09041C]">
+                                <div class="max-h-8 w-full">
+                                    <input type="number" placeholder="" id="unit-price0" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
+                                    <label for="unit-price0" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Precio uni.</label>
+                                </div>
+                                <select id="select-currency" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center bg-transparent text-[#09041C]">
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="$">$</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="€">€</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Bs">Bs</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ARS">ARS</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="COP">COP</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="MXN">MXN</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PEN">PEN</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CLP">CLP</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BRL">BRL</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="UYU">UYU</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PYG">PYG</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="DOP">DOP</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="GTQ">GTQ</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CRC">CRC</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="HNL">HNL</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="NIO">NIO</option>
+                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BOV">BOB</option>
+                                </select>
+                            </div>
+                            <div class="mb-6 max-h-8 w-full text-[#09041C]">
+                                <input type="number" placeholder="" id="alert-amount0" class="peer w-[97%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
+                                <label for="alert-amount0" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Minimo de alerta</label>
+                            </div>
+                            <div class="mb-4 max-h-28 w-full">
+                                <textarea placeholder="Descripcion" id="description"
+                                class="description w-full h-28 resize-none py-1 px-4 rounded-3xl bg-white outline-none text-base text-[#09041C] placeholder:text-center placeholder:text-[#09041C]/80"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-row gap-6 mx-auto py-4">
+                        <button type="button" id="edit-cancel-btn" class="px-4 md:px-8 xl:px-16 py-2 bg-white/90 hover:bg-white rounded-full text-lg text-[#09041C] font-semibold hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">Cancelar</button>
+                        <input type="submit" id="edit-submit" value="Editar" class="px-4 md:px-8 xl:px-16 py-2 border-2 border-white/90 hover:border-white rounded-full text-lg text-white/90 hover:text-white font-semibold cursor-pointer hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Modal para añadir productos -->
+        <div id="add-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
+            <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
+                <p class="text-lg font-semibold text-center text-white md:fixed md:top-[13%] md:border-b-2 md:w-[80%] 2xl:w-[65%] md:z-31">Añada los productos de la entrada</p>
+                <form id="add-form" class="flex flex-col w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 rounded-3xl bg-transparent">
+                    <ul id="list" class="flex flex-row flex-wrap justify-center gap-2 py-4 md:pt-0 md:mt-24 px-5 h-full overflow-y-auto">
+                    </ul>
+                    <div class="flex flex-row gap-6 mx-auto py-4">
+                        <button type="button" id="cancel-btn" class="px-4 md:px-8 xl:px-16 py-2  bg-white/90 hover:bg-white rounded-full text-lg text-[#09041C] font-semibold hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">Cancelar</button>
+                        <input type="submit" id="submit" value="Registrar" class="px-4 md:px-8 xl:px-16 py-2 border-2 border-white/90 hover:border-white rounded-full text-lg text-white/90 hover:text-white font-semibold cursor-pointer disabled:opacity-50 disabled:hover:translate-y-0 hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">
+                    </div>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-center gap-6 md:w-full md:max-h-10 absolute right-2 top-[45%] md:top-[17%]">
+                        <button type="button" id="add-btn" class="flex items-center justify-center p-4 md:w-[35%] xl:w-[25%] md:h-9 bg-white/90 hover:bg-white rounded-full md:rounded-3xl text-lg text-[#09041C] font-semibold hover:scale-105 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 cursor-pointer">
+                                <path class="cursor-pointer" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>                              
+                        </button>
+                        <button type="button" id="remove-btn" class="flex items-center justify-center p-4 md:w-[35%] xl:w-[25%] md:h-9 bg-white/90 hover:bg-white rounded-full md:rounded-3xl text-lg text-[#09041C] font-semibold hover:scale-105 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                            </svg>                              
+                        </button>
+                    </div>
+                </form>
+                <div id="detector" class="relative top-[-25rem] w-[70%] h-1"></div>
+            </div>
+        </div>
+        <!-- Nav -->
+        <nav id="navBar" class="flex items-center justify-end fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
+        <!-- SlideBar -->
+        <div id="slideBar" class="md:h-16 md:mt-9 md:static px-6 w-full fixed bottom-10 z-20"></div>
+        <!-- Informacion superior -->
+        <div class="flex flex-row justify-between h-[9%] min-h-8 md:h-[4%] w-full md:max-w-[60rem] py-6 md:py-0 min-h-16 md:min-h-4 gap-2 mt-3">
+            <div class="w-[40%] h-fit px-2 pb-0 overflow-y-hidden text-white transition-all">
+                <input id="search-input" type="text" placeholder="Buscar por nombre" 
+                    class="peer w-full md:w-2/3 md:focus:w-full h-full text-md font-regular focus:text-white px-2 py-1 border-b-2 border-white/70 focus:border-white overflow-x-hidden outline-none transition-all bg-transparent">
+                <ul id="products-founds" class="flex flex-col relative top-0 z-30 h-fit max-h-[75vh] peer-focus:pb-4 rounded-b-xl overflow-y-auto bg-white/5 backdrop-blur-2xl transition-all">
+                </ul>
+            </div>
+            <button id="open-modal-btn" class="flex flex-row items-center justify-between pr-1 py-[1px] h-full min-h-8 w-[55%] md:w-1/3 bg-white/90 hover:bg-white rounded-xl hover:translate-y-[-0.2rem] transition-all">
+                <p class="w-full text-base font-semibold text-[#09041C]">Añadir entrada</p>
+                <svg class="stroke-slate-500 h-4/5 stroke-[3px] bg-[#09041C] stroke-white/90 hover:stroke-white p-1 rounded-lg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+            </button>
+        </div>
+        <!-- Contenedor de las tablas -->
+        <div id="tables-container" class="flex flex-row flex-wrap justify-center h-[85%] md:h-[90%] w-full mt-6 md:mt-6 text-white overflow-y-auto [mask-image:linear-gradient(to_bottom,rgba(0,0,0,1)_70%,rgba(0,0,0,0))]">
+        </div>
+        <!-- Contenedor de la descripcion -->
+        <div id="description-container" class="z-30 absolute lg:bottom-[5%] xl: w-[95%] 2xl:w-[85%] h-36 rounded-3xl pb-4 pt-3 px-6 text-white/90 bg-gradient-to-br from-white/10 from-40% to-white/15 backdrop-blur-xl shadow-[0px_10px_10px_rgba(9,4,28,0.2)] transition-all">
+            <p id="deskDescription" class="h-[75%] overflow-y-auto overflow-hidden transition-all">Seleccione un producto para ver su descripcion</p>
+        </div>
+        <!-- Footer o pie de pagina -->
+        <footer class="fixed bottom-0 h-10 w-full z-20 px-6 text-white/80">
+            <div class="flex items-center justify-center w-full h-full text-center md:text-left">
+                <p class="w-full">Desarrollado por Eduardo Garces</p>
+            </div>
+        </footer>
+    </main>
+	<script src="/components/nav.js"></script>
+	<script src="/components/slideBar.js"></script>
+	<script src="index.js"></script>
+</body>
+</html>

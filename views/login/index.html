@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-zinc-50">
+    <!-- Nav -->
+    <nav id="navBar" class="flex items-center justify-end fixed top-0 left-0 right-0 h-16 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
+    <!-- Main Container -->
+    <main class="flex flex-col items-center justify-center w-full h-full px-6 pt-4 pb-0 bg-gradient-to-br from-[#09041C] from-40% to-[#C23080]">
+        <div class="flex pt-16 h-screen w-[90%] mx-auto justify-center items-center px-4">
+            <form id="form" class="flex flex-col gap-4 bg-white/20 py-6 px-8 rounded-3xl text-lg shadow-lg w-full md:w-9/12 lg:w-2/4 xl:w-2/5 text-white">
+                <div class="flex flex-col gap-2 w-full">
+                    <label class="font-bold" for="email-input">Email <span class="text-red-500 text-zinc-900">*</span></label>
+                    <input id="email-input" type="text" name="email-input" autocomplete="off" placeholder="Ingresa tu email" class="focus:scale-x-105 rounded-full py-2 px-6 bg-white outline-none border-2 border-white text-[#09041C] transition-all">
+                </div>
+                <div class="flex flex-col gap-2 w-full">
+                    <label class="font-bold" for="password-input">Contraseña <span class="text-red-500 text-zinc-900">*</span></label>
+                    <input id="password-input"type="password" name="password-input" autocomplete="off" placeholder="Ingresa tu contraseña" class="focus:scale-x-105 rounded-full py-2 px-6 bg-white outline-none border-2 border-white text-[#09041C] transition-all">
+                    <p id="error-text" class="text-sm text-white/90 h-0 transition-all"></p>
+                </div>
+                <button
+                    id="form-btn"
+                    class="bg-transparent border-2 border-white hover:scale-105 py-2 px-4 rounded-full font-bold text-white/90 hover:text-white text-center transition ease-in-out disabled:opacity-40 disabled:cursor-not-allowed">
+                        Iniciar sesion
+                </button>
+            </form>
+        </div>
+    </main>
+    <script src="/components/nav.js"></script>
+    <script src="index.js"></script>
+    <!-- <script src="index.js"></script> -->
+</body>
+</html>
