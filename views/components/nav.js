@@ -40,7 +40,7 @@ if (window.location.pathname === '/signup/') {
 
 const closeBtn = document.querySelector('.close-btn');
 
-closeBtn.addEventListener('click', async e => {
+closeBtn?.addEventListener('click', async e => {
     try {
         await axios.get('/api/logout');
         window.location.pathname = '/login';

@@ -127,29 +127,6 @@ const resetList = () => {
     `;
 };
 
-//Esta funcion se encarga de detectar si hay colision entre el div detector y el li de la ul
-const checkCardPosition = () => {
-    listItemsUpdate();
-    if (window.innerWidth <= 768) {
-        listItems.forEach(li => {
-            //El método getBoundingClientRect devuelve un objeto con las coordenadas y dimensiones del elemento en la pantalla.
-            const detector = divDetector.getBoundingClientRect();
-            const detected = li.getBoundingClientRect();
-            
-            if (detector.bottom > detected.top && detector.top < detected.bottom && detector.right > detected.left && detector.left < detected.right ) {
-                if (!li.classList.contains('selected')) {
-                    const previousSelected = document.querySelector('.selected');
-
-                    previousSelected?.classList.remove('selected', 'bg-white/70', 'opacity-100');
-                    previousSelected?.classList.add('bg-white/30', 'opacity-80');
-                    li.classList.remove('bg-white/30', 'opacity-80');
-                    li.classList.add('selected', 'bg-white/70', 'opacity-100');
-                }
-            }
-        });
-    }
-};
-
 //Se seleccionan todos los btn de editar y a cada uno se le agrega un evento de click con la logica de cargar los valores en sus respectivos inputs
 const activateEditBtn = () => {
     //Despues de cargar por completo el DOOM se selecciona el btn de edit y a traves de un evento se le remueve la clase hidden
@@ -208,7 +185,7 @@ const loadProducts = async (phoneResolution) => {
     
     try {
         //Llamada a la api a traves de axios 
-        const { data } = await axios.get('/api/entries', {
+        const { data } = await axios.get('/api/sales', {
             withCredentials : true
         });
 
@@ -225,11 +202,10 @@ const loadProducts = async (phoneResolution) => {
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2 rounded-ss-3xl">Nombre</th>
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Codigo</th>
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Fabricante</th>
-                            <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Lote</th>
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Cantidad</th>
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Precio uni.</th>
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Precio total</th>
-                            <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Fecha de entrada</th>
+                            <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-r-2 border-b-2">Fecha</th>
                             <th class="p-4 min-w-16 min-h-6 text-base font-bold border-white/40 border-b-2 rounded-se-3xl"></th>
                         </tr>
                     </thead>
@@ -247,6 +223,7 @@ const loadProducts = async (phoneResolution) => {
                 //Creo el tr, le agrego un id, una clase y el contenido html que va a tener
                 const tr = document.createElement('tr');
 
+                //Asignar el color correspondiente del semaforo
                 tr.classList.add('bg-[#F23F3F]/10', 'relative', 'transition-all');
                 tr.id = product.id;
 
@@ -254,20 +231,19 @@ const loadProducts = async (phoneResolution) => {
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2 ${i === 0 ? 'rounded-es-3xl' : ''}">${product.name}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.code}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.manufacturer}</td>
-                    <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.lot}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.quantity + ' ' + product.unit}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.unitPrice + ' ' + product.currency}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.totalPrice + ' ' + product.currency}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${date}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal ${i === 0 ? 'rounded-ee-3xl' : ''}">
-                        <button ${product.isEditable ? '' : 'disabled'} class="edit-btn flex items-center justify-center relative z-20 h-full w-full m-auto disabled:opacity-40 disabled:hover:scale-100 hover:scale-110 transition-all">
+                        <button class="edit-btn flex items-center justify-center relative z-20 h-full w-full m-auto disabled:opacity-40 disabled:hover:scale-100 hover:scale-110 transition-all">
                             <svg class="stroke-white h-full w-full max-h-8 max-w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                             </svg>
                         </button>
                     </td>
                     <div class="flex items-center absolute inset-0 z-10 bg-[#09041C]/0 hover:bg-[#09041C]/70 py-1 text-white/0 hover:text-white transition-all ${i === 0 ? 'rounded-b-3xl' : ''}">
-                        <p class="h-fit w-full text-center transition-all">${product.editDate != null ? 'Ultima edicion ' + editDate : editDate} ${product.isEditable ? '' : 'Ya se registro una salida del producto, no se puede editar'}</p>
+                        <p class="h-fit w-full text-center transition-all">${product.editDate != null ? 'Ultima edicion ' + editDate : editDate}</p>
                     </div>
                 `;
 
@@ -311,10 +287,6 @@ const loadProducts = async (phoneResolution) => {
                             <td class="w-1/2 text-base font-semibold text-center pt-2">${product.code}</td>
                         </tr>
                         <tr class="align-middle odd:bg-black/10 even:bg-black/0">
-                            <td class="w-1/2 text-base pt-2 pl-6 border-r-2 text-left">Lote</td>
-                            <td class="w-1/2 text-base font-semibold text-center pt-2">${product.lot}</td>
-                        </tr>
-                        <tr class="align-middle odd:bg-black/10 even:bg-black/0">
                             <td class="w-1/2 text-base pt-2 pl-6 border-r-2 text-left">Fabricante</td>
                             <td class="w-1/2 text-base font-semibold text-center pt-2">${product.manufacturer}</td>
                         </tr>
@@ -339,11 +311,11 @@ const loadProducts = async (phoneResolution) => {
                         </tr>
                         <tr class="align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
                             <td colspan="2" class="text-white font-semibold bg-[#09041C]/20 rounded-b-3xl">
-                                <button ${product.isEditable ? '' : 'disabled'} class="edit-btn flex flex-row items-center justify-center h-8 w-full my-2 px-2 gap-2 mx-auto disabled:opacity-40 hover:scale-110 transition-all">
+                                <button class="edit-btn flex flex-row items-center justify-center h-8 w-full my-2 px-2 gap-2 mx-auto disabled:opacity-40 hover:scale-110 transition-all">
                                     <svg class="stroke-white max-h-8 max-w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                     </svg>
-                                    <p class="max-h-8 text-sm text-white text-center">${product.editDate != null ? 'Ultima edicion ' + editDate : editDate} ${product.isEditable ? '' : 'No se puede editar'}</p>
+                                    <p class="max-h-8 text-sm text-white text-center">${product.editDate != null ? 'Ultima edicion ' + editDate : editDate}</p>
                                 </button>
                             </td>
                         </tr>
@@ -364,8 +336,6 @@ const loadProducts = async (phoneResolution) => {
     } catch (error) {
         // window.location.pathname = '/login';
         console.log(error);
-        
-        
     }
 };
 
@@ -628,7 +598,7 @@ editForm.addEventListener('submit', async e => {
             loadProducts(phoneResolution);
         }
 
-        codes = [];
+        codes = []
 
     } catch (error) {
         console.log(error);
@@ -640,13 +610,13 @@ editCancelBtn.addEventListener('click', e => {
     editModal.classList.add('hidden');
 });
 
-//Abre el modal de añadir entradas
+//Abre el modal de añadir salidas
 openModalBtn.addEventListener('click', e => {
     list.firstElementChild.classList.add('selected', 'bg-white/70', 'opacity-100');
     addModal.classList.remove('hidden');
 });
 
-//Cierra el modal de añadir entradas
+//Cierra el modal de añadir salidas
 cancelBtn.addEventListener('click', e => {
     addModal.classList.add('hidden');
     productCount = 1;
@@ -690,119 +660,6 @@ addform.addEventListener('submit', async e => {
     }
 });
 
-//Lleva al usuario al modulo de configuracion
-settingsBtn.addEventListener('click', e => {
-    window.location.pathname = `/settings/`
-});
-
-//Añade un nuevo producto al formulario de registro de entradas
-addform.addEventListener('click', e => {
-    //Se comprueba si se cliqueo el boton de añadir producto al formulario
-    if (e.target.closest('#add-btn')?.id === 'add-btn') {
-        //Se crea el li que va a ser añadido y se le añaden sus respectivas clases
-        const li = document.createElement('li');
-        li.classList.add('relative', 'flex', 'flex-col', 'w-full', 'max-w-[19rem]', 'h-fit', 'px-6', 'pb-4', 'pt-4', 'gap-x-4', 'text-center', 'rounded-xl', 'md:flex-row', 'md:flex-wrap', 'bg-white/30', 'opacity-80', 'md:max-w-[34rem]');
-        li.innerHTML = `
-            <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center text-white hidden"></div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="name${productCount}" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="name${productCount}" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Nombre</label>
-            </div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="code${productCount}" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="code${productCount}" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Codigo</label>
-            </div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="lot${productCount}" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="lot${productCount}" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Lote</label>
-            </div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="manufacturer${productCount}" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="manufacturer${productCount}" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Fabricante</label>
-            </div>
-            <div class="flex flex-row justify-between h-fit w-full md:max-w-[15rem] mb-6 pr-2 rounded-full bg-white text-[#09041C] border-2 border-white">
-                <div class="max-h-8 w-full">
-                    <input type="number" placeholder="" id="quantity${productCount}" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                    <label for="quantity${productCount}" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Cantidad</label>
-                </div>
-                <select id="select-unid" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center full bg-transparent text-[#09041C]">
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Uni.">Uni.</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="N/A">N/A</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="kg">kg</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="g">g</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mg">mg</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lb">lb</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="oz">oz</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ton">ton</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lts">Lts</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ml">ml</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m³">m³</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm³">cm³</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m">m</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm">cm</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mm">mm</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ft">ft</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="in">in</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="paq">paq</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="doc">doc</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cajas">Cajas</option>
-                </select>
-            </div>
-            <div class="flex flex-row justify-between h-fit w-full md:max-w-[15rem] mb-6 pr-2 rounded-full bg-white text-[#09041C] border-2 border-white">
-                <div class="max-h-8 w-full">
-                    <input type="number" placeholder="" id="unit-price${productCount}" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none">
-                    <label for="unit-price${productCount}" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Precio uni.</label>
-                </div>
-                <select id="select-currency" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center full bg-transparent text-[#09041C]">
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="$">$</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="€">€</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Bs">Bs</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ARS">ARS</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="COP">COP</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="MXN">MXN</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PEN">PEN</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CLP">CLP</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BRL">BRL</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="UYU">UYU</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PYG">PYG</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="DOP">DOP</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="GTQ">GTQ</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CRC">CRC</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="HNL">HNL</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="NIO">NIO</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BOV">BOB</option>
-                </select>
-            </div>
-            <div class="mb-6 max-h-8 w-full text-[#09041C]">
-                <input type="text" placeholder="" id="alert-amount${productCount}" class="peer w-[97%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                <label for="alert-amount${productCount}" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Minimo de alerta</label>
-            </div>
-            <div class="mb-4 h-8 w-full text-[#09041C]">
-                <textarea placeholder="Descripcion" id="description" 
-                class="description w-full min-h-6 h-9 focus:h-28 resize-none py-1 px-4 bg-white rounded-3xl border-2 border-white/90 outline-none text-base placeholder:text-[#09041C] placeholder:text-center"></textarea>
-            </div>
-        `;
-    
-        //Se añade el li a la ul, se incrementa productCount y se actualiza el array que va a contener a todos los li
-        list.append(li);
-
-        productCount ++;
-        listItemsUpdate();
-
-    } else if (e.target.closest('#remove-btn')?.id === 'remove-btn') {
-        //Si en la ul existe un solo hijo entonces no se elimina
-        if (listItems.length > 1) {
-            //Se selecciona en el doom el li que tenga la clase selected y si existe entondes es eliminado
-            const liSelected = document.querySelector('.selected');
-            liSelected?.remove();
-
-            //Se llama a la funcion encargada de añadir la clase selected y se actualiza listItems
-            checkCardPosition();
-            listItemsUpdate();
-        }
-    }
-});
-
 //Se activa cuando el usuario hace focus en algun text area de descripcion del formulario 
 list.addEventListener('focusin', e => {
     if (e.target.classList.contains('description')) {
@@ -818,24 +675,6 @@ list.addEventListener('focusout', e => {
     
         parentDiv.classList.remove('h-fit');
         parentDiv.classList.add('h-8');
-    }
-});
-
-//Llama a la funcion encargada de verificar la card que debe estar seleccionada
-list.addEventListener('scroll', e => {
-    checkCardPosition();
-});
-
-//Cuando se esta en modo destock comprueba cual card ha sido clicqueada para seleccionarla
-list.addEventListener('click', e => {
-    if (window.innerWidth > 768) {
-        const li = e.target.closest('li');
-        const previousSelected = document.querySelector('.selected');
-
-        previousSelected?.classList.remove('selected', 'bg-white/70', 'opacity-100');
-        previousSelected?.classList.add('bg-white/30', 'opacity-80');
-        li?.classList.remove('bg-white/30', 'opacity-80');
-        li?.classList.add('selected', 'bg-white/70', 'opacity-100');
     }
 });
 

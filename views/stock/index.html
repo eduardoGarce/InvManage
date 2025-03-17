@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvManage-Entries</title>
+    <title>InvManage-Stock</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="h-screen m-0">
     <!-- Colores: [#F23F3F] Rojo, [#09041C] Azul Oscuro, [#C23080] Violeta -->
     <main class="flex flex-col items-center justify-center w-full h-full px-6 pt-4 pb-0 bg-gradient-to-br from-[#09041C] from-40% to-[#C23080]">
-        <!-- Modal para editar productos -->
+        <!-- Modal de informacion general -->
         <div id="edit-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
             <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
                 <form id="edit-form" class="flex flex-col justify-center w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 gap-8 rounded-3xl bg-transparent transition-all">
@@ -103,33 +103,6 @@
                 </form>
             </div>
         </div>
-        <!-- Modal para añadir productos -->
-        <div id="add-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
-            <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
-                <p class="text-lg font-semibold text-center text-white md:fixed md:top-[13%] md:border-b-2 md:w-[80%] 2xl:w-[65%] md:z-31">Añada los productos de la entrada</p>
-                <form id="add-form" class="flex flex-col w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 rounded-3xl bg-transparent">
-                    <ul id="list" class="flex flex-row flex-wrap justify-center gap-2 py-4 md:pt-0 md:mt-24 px-5 h-full overflow-y-auto">
-                    </ul>
-                    <div class="flex flex-row gap-6 mx-auto py-4">
-                        <button type="button" id="cancel-btn" class="px-4 md:px-8 xl:px-16 py-2  bg-white/90 hover:bg-white rounded-full text-lg text-[#09041C] font-semibold hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">Cancelar</button>
-                        <input type="submit" id="submit" value="Registrar" class="px-4 md:px-8 xl:px-16 py-2 border-2 border-white/90 hover:border-white rounded-full text-lg text-white/90 hover:text-white font-semibold cursor-pointer disabled:opacity-50 disabled:hover:translate-y-0 hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">
-                    </div>
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-center gap-6 md:w-full md:max-h-10 absolute right-2 top-[45%] md:top-[17%]">
-                        <button type="button" id="add-btn" class="flex items-center justify-center p-4 md:w-[35%] xl:w-[25%] md:h-9 bg-white/90 hover:bg-white rounded-full md:rounded-3xl text-lg text-[#09041C] font-semibold hover:scale-105 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 cursor-pointer">
-                                <path class="cursor-pointer" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>                              
-                        </button>
-                        <button type="button" id="remove-btn" class="flex items-center justify-center p-4 md:w-[35%] xl:w-[25%] md:h-9 bg-white/90 hover:bg-white rounded-full md:rounded-3xl text-lg text-[#09041C] font-semibold hover:scale-105 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-                            </svg>                              
-                        </button>
-                    </div>
-                </form>
-                <div id="detector" class="relative top-[-25rem] w-[70%] h-1"></div>
-            </div>
-        </div>
         <!-- Nav -->
         <nav id="navBar" class="flex items-center justify-end fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
         <!-- SlideBar -->
@@ -139,15 +112,26 @@
             <div class="w-[40%] h-fit px-2 pb-0 overflow-y-hidden text-white transition-all">
                 <input id="search-input" type="text" placeholder="Buscar por nombre" 
                     class="peer w-full md:w-2/3 md:focus:w-full h-full text-md font-regular focus:text-white px-2 py-1 border-b-2 border-white/70 focus:border-white overflow-x-hidden outline-none transition-all bg-transparent">
-                <ul id="products-founds" class="flex flex-col relative top-0 z-30 h-fit max-h-[75vh] peer-focus:pb-4 rounded-b-xl overflow-y-auto bg-white/5 backdrop-blur-2xl transition-all">
-                </ul>
+                <ul id="products-founds" class="flex flex-col relative top-0 z-30 h-fit max-h-[75vh] peer-focus:pb-4 rounded-b-xl overflow-y-auto bg-white/5 backdrop-blur-2xl transition-all"></ul>
             </div>
-            <button id="open-modal-btn" class="flex flex-row items-center justify-between pr-1 py-[1px] h-full min-h-8 w-[55%] md:w-1/3 bg-white/90 hover:bg-white rounded-xl hover:translate-y-[-0.2rem] transition-all">
-                <p class="w-full text-base font-semibold text-[#09041C]">Añadir entrada</p>
-                <svg class="stroke-slate-500 h-4/5 stroke-[3px] bg-[#09041C] stroke-white/90 hover:stroke-white p-1 rounded-lg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-            </button>
+            <div class="flex flex-col items-center relative z-30 h-full min-h-8 w-[55%] md:w-1/3 rounded-xl transition-all">
+                <button id="general-info-btn" class="absolute z-40 flex flex-row items-center pr-1 py-[1px] h-full min-h-8 w-full bg-white/90 hover:bg-white rounded-xl hover:translate-y-[-0.2rem] transition-all">
+                    <p class="w-full text-base font-semibold text-[#09041C]">Informacion general</p>
+                </button>
+                <div class="flex flex-col items-center lg:items-start lg:flex-row w-full h-auto bg-white/10 text-white rounded-xl backdrop-blur-md transition-all hidden">
+                    <button class="h-full min-h-8 w-full py-3 lg:py-0 text-center bg-transparent hover:bg-white/15 text-base font-semibold md:border-r-2 border-white/50 rounded-t-xl lg:rounded-none lg:rounded-s-xl transition-all">Total de productos</button>
+                    <button class="h-full min-h-8 w-full py-3 lg:py-0 text-center bg-white/10 lg:bg-transparent hover:bg-white/15 text-base font-semibold md:border-r-2 border-white/50 transition-all">Productos con stock bajo</button>
+                    <button class="h-full min-h-8 w-full py-3 lg:py-0 text-center bg-transparent hover:bg-white/15 text-base font-semibold md:border-r-2 border-white/50 transition-all">Productos mas vendidos</button>
+                    <button class="h-full min-h-8 w-full py-3 lg:py-0 text-center bg-white/10 lg:bg-transparent hover:bg-white/15 text-base font-semibold md:border-r-2 border-white/50 transition-all">Productos menos vendidos</button>
+                    <button class="flex justify-center items-center h-full min-h-8 w-full lg:max-w-16 py-3 lg:py-0 text-center bg-transparent hover:bg-white/15 text-base font-semibold border-white/90 rounded-b-xl lg:rounded-none lg:rounded-e-xl transition-all">
+                        <svg class="max-h-10 max-w-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>                          
+                    </button>
+                </div>
+                <div class="w-full h-fit max-h-[60vh] bg-white/20 md:bg-white/25 backdrop-blur-xl text-white rounded-es-xl rounded-ee-xl transition-all">
+                </div>
+            </div>
         </div>
         <!-- Contenedor de las tablas -->
         <div id="tables-container" class="flex flex-row flex-wrap justify-center h-[85%] md:h-[90%] w-full mt-6 md:mt-6 text-white overflow-y-auto [mask-image:linear-gradient(to_bottom,rgba(0,0,0,1)_70%,rgba(0,0,0,0))]">

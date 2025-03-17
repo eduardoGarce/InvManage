@@ -8,10 +8,12 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
-const { userExtractor } = require('./middleware/auth');
 const logoutRouter = require('./controllers/logout');
-const { MONGO_URI } = require('./config');
 const entriesRouter = require('./controllers/entries');
+const stockRouter = require('./controllers/stock');
+const salesRouter = require('./controllers/sales');
+const { userExtractor } = require('./middleware/auth');
+const { MONGO_URI } = require('./config');
 
 (async() => {
     try {
@@ -32,8 +34,8 @@ app.use('/', express.static(path.resolve('views', 'home')));
 app.use('/signup', express.static(path.resolve('views', 'signup')));
 app.use('/login', express.static(path.resolve('views', 'login')));
 app.use('/entries', express.static(path.resolve('views', 'entries')));
-app.use('/stock', express.static(path.resolve('views', 'entries')));
-app.use('/sales', express.static(path.resolve('views', 'entries')));
+app.use('/stock', express.static(path.resolve('views', 'stock')));
+app.use('/sales', express.static(path.resolve('views', 'sales')));
 app.use('/settings', express.static(path.resolve('views', 'settings')));
 app.use('/components', express.static(path.resolve('views', 'components')));
 app.use('/verify/:id/:token', express.static(path.resolve('views', 'verify')));
@@ -45,5 +47,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter);
 app.use('/api/entries', userExtractor, entriesRouter);
+app.use('/api/stock', userExtractor, stockRouter);
+app.use('/api/sales', userExtractor, salesRouter);
 
 module.exports = app;

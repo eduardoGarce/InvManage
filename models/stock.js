@@ -1,33 +1,28 @@
 const mongoose = require('mongoose');
 
-const entrieSchema = new mongoose.Schema({
+const stockSchema = new mongoose.Schema({
     name: String,
     code: String,
-    lot: String,
     manufacturer: String,
     quantity: Number,
     unit: String,
     unitPrice: Number,
     currency: String,
     totalPrice: Number,
-    alertAmounts: Array,
-    date: Date,
-    editDate: {
+    lastEntryDate: Date,
+    lastExitDate: {
         type: Date,
         default: null,
     },
+    alertAmounts: Array,
     description: String,
-    isEditable : {
-        type: Boolean,
-        default: true,
-    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
 })
 
-entrieSchema.set('toJSON', {
+stockSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
         delete returnedObject._id;
@@ -35,6 +30,6 @@ entrieSchema.set('toJSON', {
     }
 });
 
-const Entrie = mongoose.model('Entrie', entrieSchema); 
+const Stock = mongoose.model('Stock', stockSchema); 
 
-module.exports = Entrie;
+module.exports = Stock;
