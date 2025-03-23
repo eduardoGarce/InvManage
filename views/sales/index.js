@@ -1,28 +1,23 @@
 const addModal = document.querySelector('#add-modal');
+const editModal = document.querySelector('#edit-modal');
 const addform = document.querySelector('#add-form');
-const cancelBtn = document.querySelector('#cancel-btn');
+const editForm = document.querySelector('#edit-form');
 const submitBtn = document.querySelector('#submit');
 const openModalBtn = document.querySelector('#open-modal-btn');
-const settingsBtn = document.querySelector('#settings-btn');
 const tablesContainer = document.querySelector('#tables-container');
 const list = document.querySelector('#list');
-const divDetector = document.querySelector('#detector');
-const addBtn = document.querySelector('#add-btn');
-const removeBtn = document.querySelector('#remove-btn');
-const editModal = document.querySelector('#edit-modal');
+const editList = document.querySelector('#edit-list');
 const editCancelBtn = document.querySelector('#edit-cancel-btn');
-const editForm = document.querySelector('#edit-form');
+const cancelBtn = document.querySelector('#cancel-btn');
 const editSubmitBtn = document.querySelector('#edit-submit');
-const searchInput = document.querySelector('#search-input');
-const productsFounds = document.querySelector('#products-founds');
 const descriptionContainer = document.querySelector('#description-container');
+const productsFounds = document.querySelector('#products-founds');
+const productsFoundsAdd = document.querySelector('#products-founds-add');
+const productsFoundsEdit = document.querySelector('#products-founds-edit');
+const searchInput = document.querySelector('#search-input');
+const searchInputAdd = document.querySelector('#search-input-add');
+const searchInputEdit = document.querySelector('#search-input-edit');
 
-//Se declara una variable (let porque se actualiza constantemente) que contendrá todos los li de la lista del formulario del registro
-let listItems = document.querySelectorAll('#list li');
-//Variable para llevar la distincion de los inputs y sus labels
-let productCount = 1;
-//liCount es un numero que incrementa por iteracion y se encarga de completar los id para que concuerden con los li del doom en inputsValidation
-let liCount = productCount != 1 ? 1 : 0;
 //codes almacena cada uno de los codigos ingresados en los li para compararlos y ver si se repiten en inputValidations
 let codes = [];
 //isValidForm sera false si alguna validacion del formulario falla y en caso de ser true se enviara la peticion a traves de axios
@@ -31,10 +26,12 @@ let isValidForm;
 let isWideScreen = window.innerWidth > 1023;
 //Variable para comprobar si se renderizara la lista en su version mobile o destock
 let phoneResolution = !isWideScreen;
-//Encargada de almacenar el id del producto que se esta editando (se usa en la funcion activateEditBtn y en el evento de submit del formulario de la ediicion)
+//Encargada de almacenar el id del producto que se esta editando (se usa en la funcion activateEditBtn y en el evento de submit del formulario de edicion)
 let productFound = '';
-//Guarda el array de productos pertenecientes a la entrada
+//Guarda el array de productos pertenecientes a la salida
 let productsArray = [];
+//Guarda el array de productos del stock
+let stockArray = [];
 
 //Se encarga de actualizar la variable listItems
 const listItemsUpdate = () => {
@@ -42,89 +39,53 @@ const listItemsUpdate = () => {
 }
 
 //Se encarga de vaciar la ul del modal y solo deja un solo li con inputs vacios
-const resetList = () => {
-    list.innerHTML = `
-        <li class="relative flex flex-col w-full max-w-[19rem] h-fit px-6 pb-4 pt-4 gap-x-4 bg-white/30 opacity-80 text-center rounded-xl md:flex-row md:flex-wrap md:max-w-[34rem]">
-            <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center text-white hidden"></div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="name" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="name" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Nombre</label>
-            </div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="code" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="code" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Codigo</label>
-            </div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="lot" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="lot" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Lote</label>
-            </div>
-            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                <input type="text" placeholder="" id="manufacturer" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                <label for="manufacturer" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Fabricante</label>
-            </div>
-            <div class="flex flex-row justify-between h-fit w-full md:max-w-[15rem] mb-6 pr-2 rounded-full bg-white text-[#09041C] border-2 border-white">
-                <div class="max-h-8 w-full">
-                    <input type="number" placeholder="" id="quantity" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                    <label for="quantity" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Cantidad</label>
-                </div>
-                <select id="select-unid" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center full bg-transparent text-[#09041C]">
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Uni.">Uni.</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="N/A">N/A</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="kg">kg</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="g">g</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mg">mg</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lb">lb</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="oz">oz</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ton">ton</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lts">Lts</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ml">ml</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m³">m³</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm³">cm³</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m">m</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm">cm</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mm">mm</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ft">ft</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="in">in</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="paq">paq</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="doc">doc</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cajas">Cajas</option>
-                </select>
-            </div>
-            <div class="flex flex-row justify-between h-fit w-full md:max-w-[15rem] mb-6 pr-2 rounded-full bg-white text-[#09041C] border-2 border-white">
-                <div class="max-h-8 w-full">
-                    <input type="number" placeholder="" id="unit-price" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none">
-                    <label for="unit-price" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Precio uni.</label>
-                </div>
-                <select id="select-currency" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center full bg-transparent text-[#09041C]">
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="$">$</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="€">€</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Bs">Bs</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ARS">ARS</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="COP">COP</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="MXN">MXN</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PEN">PEN</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CLP">CLP</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BRL">BRL</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="UYU">UYU</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PYG">PYG</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="DOP">DOP</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="GTQ">GTQ</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CRC">CRC</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="HNL">HNL</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="NIO">NIO</option>
-                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BOV">BOB</option>
-                </select>
-            </div>
-            <div class="mb-6 max-h-8 w-full text-[#09041C]">
-                <input type="text" placeholder="" id="alert-amount" class="peer w-[97%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                <label for="alert-amount" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Minimo de alerta</label>
-            </div>
-            <div class="mb-4 h-8 w-full text-[#09041C]">
-                <textarea placeholder="Descripcion" id="description" 
-                class="description w-full min-h-6 h-9 focus:h-28 resize-none py-1 px-4 bg-white rounded-3xl border-2 border-white/90 outline-none text-base placeholder:text-[#09041C] placeholder:text-center"></textarea>
-            </div>
-        </li>
-    `;
+const resetList = (nameSelect, codeSelect, isAdd) => {
+    //Añadir la opcion por defecto en cada input en caso de que se este limpiando el input de añadir salida
+    if (isAdd) {
+        nameSelect.innerHTML = `
+            <option value="default">Nombre</option>
+        `;
+        codeSelect.innerHTML = `
+            <option value="default">Codigo</option>
+        `;
+    }
+
+    //Añadir los options tanto del input name como del input code
+    stockArray.forEach(product => {
+        const nameOption = document.createElement('option');
+        const codeOption = document.createElement('option');
+
+        nameOption.value = product.name;
+        nameOption.innerHTML = product.name;
+        codeOption.value = product.code;
+        codeOption.innerHTML = product.code;
+
+        nameSelect.append(nameOption);
+        codeSelect.append(codeOption);
+    })
+
+    //Añadir un evento de tipo select al input de name y code, evento en el que se añadiran las funcionalidades de que al seleccionar una opcion automaticamente se autocomplete la otra
+    nameSelect.addEventListener('input', e => {
+        const productFound = stockArray.find(product => product.name === e.target.value);
+
+        for (const option of codeSelect.children) {
+            if (productFound.code === option.value) {
+                option.selected = true;
+                break;
+            }
+        }
+    });
+
+    codeSelect.addEventListener('input', e => {
+        const productFound = stockArray.find(product => product.code === e.target.value);
+
+        for (const option of nameSelect.children) {
+            if (productFound.name === option.value) {
+                option.selected = true;
+                break;
+            }
+        }
+    });
 };
 
 //Se seleccionan todos los btn de editar y a cada uno se le agrega un evento de click con la logica de cargar los valores en sus respectivos inputs
@@ -133,48 +94,29 @@ const activateEditBtn = () => {
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', e => {
             editModal.classList.remove('hidden');
+
+            //seleccionar los inputs de nombre y codigo correspondientes al modal de añadir para enviarlos a la funcion que va a cargar los options dentro de los selects y añadir sus respectivos eventos de click
+            const nameSelect = editList.children[1].children[0];
+            const codeSelect = editList.children[1].children[1];
+            const quantityInput = editList.children[1].children[2].children[0];
+            resetList(nameSelect, codeSelect, isAdd = false);
+
             //Seleccionar el id del producto
             const productId = phoneResolution ? e.target.closest('.edit-btn').parentElement.parentElement.parentElement.parentElement.id : e.target.closest('.edit-btn').parentElement.parentElement.id;
-
-            //Se transforman se array a todos los inputs del formulario de editar para iterar sobre ellos y se selecciona el objeto del producto
-            const inputsContainers = [ ...editForm.children[0].children[0].children ];
             productFound = productsArray.find(product => product.id === productId);
 
-            //Mapa que relaciona los labels de los inputs con las propiedades del objeto
-            const propertyMap = {
-                "Nombre": "name",
-                "Codigo": "code",
-                "Lote": "lot",
-                "Fabricante": "manufacturer",
-                "Cantidad": "quantity",
-                "Precio uni.": "unitPrice",
-                "Minimo de alerta": "alertAmounts",
-                "Descripcion": "description"
-            };
-
-            //Iterar sobre cada input del formulario y añadir su valor
-            inputsContainers.forEach((div, index) => {
-                //Omitir el primer elemento de la iteracion porque es un texto informativo
-                if (index != 0) {
-                    //Comprobamos en que posicion se encuentra el input y se añade a una constante al igual que el select
-                    const input = ['TEXTAREA', 'INPUT'].includes(div.children[0].tagName) ? div.children[0] : div.children[0].children[0];
-                    const select = div.children[1] && ['SELECT'].includes(div.children[1]?.tagName) ? div.children[1] : '';
-                    let textLabel = '';
-                    let property = '';
-
-                    //Se comprueba si el campo no es un text area para selecionar el texto de su label y con el buscar en el mapa de relaciones el valor que deberia llevar la propiedad del objeto
-                    if (!'TEXTAREA'.includes(div.children[0].tagName)) {
-                        textLabel = ['INPUT'].includes(div.children[0].tagName) ? div.children[1].textContent : div.children[0].children[1].textContent;
-                        property = propertyMap[textLabel];
-                        
-                        //En caso de que select exista se busca su valor correspondiente en el objeto del producto y se renderiza
-                        if (select) select.value = textLabel === 'Cantidad' ? productFound.unit : productFound.currency;
-                        input.value = property != 'alertAmounts' ? productFound[property] : productFound[property][0];
-                    } else {
-                        input.value = productFound.description;
-                    }
+            for (const option of nameSelect.children) {
+                if (productFound.name === option.value) {
+                    option.selected = true;
                 }
-            });
+            }
+            for (const option of codeSelect.children) {
+                if (productFound.code === option.value) {
+                    option.selected = true;
+                }
+            }
+
+            quantityInput.value = productFound.quantity;
         });
     });
 
@@ -191,6 +133,9 @@ const loadProducts = async (phoneResolution) => {
 
         //Guardar el array en la variable temporal externa
         productsArray = data;
+        //Guardar todos los productos del stock
+        const stockResponse = await axios.get('/api/stock');
+        stockArray = stockResponse.data.reverse();
 
         //Se itera sobre cada objeto del array con los productos para renderizarlos en la lista
         tablesContainer.innerHTML = '';
@@ -307,7 +252,7 @@ const loadProducts = async (phoneResolution) => {
                             <td class="w-1/2 text-base font-semibold text-center pt-2 pb-2">${date}</td>
                         </tr>
                         <tr class="text-center align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
-                            <td colspan="2" class="px-2 pb-6 text-white">${product.description}</td>
+                            <td colspan="2" class="p-2 text-white">${product.description && product.description != '' ? product.description : 'Sin descripcion'}</td>
                         </tr>
                         <tr class="align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
                             <td colspan="2" class="text-white font-semibold bg-[#09041C]/20 rounded-b-3xl">
@@ -394,81 +339,61 @@ const inputValidations = (li) => {
             }
         }
     });
-
-    liCount++;
 };
 
 //Encargada de extraer la informacion de los inputs y devolver un objeto con sus valores dependiendo el caso
 const infoExtractor = (container, purpose) => {
     switch (purpose) {
         case 'edit':
-            const nameEdit = container.children[1].children[0].value;
-            const codeEdit = container.children[2].children[0].value;
-            const lotEdit = container.children[3].children[0].value;
-            const manufacturerEdit = container.children[4].children[0].value;
-            const quantityEdit = container.children[5].children[0].children[0].value;
-            const unitEdit = container.children[5].children[1].value;
-            const unitPriceEdit = container.children[6].children[0].children[0].value;
-            const currencyEdit = container.children[6].children[1].value;
-            const alertAmountEdit = container.children[7].children[0].value;
-            const descriptionEdit = container.children[8].children[0].value;
-            const totalPriceEdit = unitPriceEdit * quantityEdit;
-            const alertAmountsEdit = [
-                alertAmountEdit,
-                alertAmountEdit * 2,
-                alertAmountEdit * 3
-            ];
+            const nameEdit = container.children[0].value;
+            const codeEdit = container.children[1].value;
+            console.log(container);
+            const quantityEdit = container.children[2].children[0].value;
+            
+
+            const stockProductEdit = stockArray.find(product => product.code === codeEdit);
+
+            const unitPriceEdit = stockProductEdit.unitPrice;
+            const totalPriceEdit = quantityEdit * unitPriceEdit;
 
             inputValidations(container);
             
             const editedProduct = {
                 nameEdit,
                 codeEdit,
-                lotEdit,
-                manufacturerEdit,
                 quantityEdit,
-                unitEdit,
                 unitPriceEdit,
-                currencyEdit,
                 totalPriceEdit,
-                alertAmountsEdit,
-                descriptionEdit,
             }
 
             return editedProduct;
 
         case 'add':
-            const name = container.children[1].children[0].value;
-            const code = container.children[2].children[0].value;
-            const lot = container.children[3].children[0].value;
-            const manufacturer = container.children[4].children[0].value;
-            const quantity = container.children[5].children[0].children[0].value;
-            const unit = container.children[5].children[1].value;
-            const unitPrice = container.children[6].children[0].children[0].value;
-            const currency = container.children[6].children[1].value;
-            const alertAmount = container.children[7].children[0].value;
-            const description = container.children[8].children[0].value;
-            const totalPrice = unitPrice * quantity;
-            const alertAmounts = [
-                alertAmount,
-                alertAmount * 2,
-                alertAmount * 3
-            ];
+            const name = container.children[0].value;
+            const code = container.children[1].value;
+            const quantity = container.children[2].children[0].value;
+
+            const stockProduct = stockArray.find(product => product.code === code);
+
+            const manufacturer = stockProduct.manufacturer;
+            const unit = stockProduct.unit;
+            const unitPrice = stockProduct.unitPrice;
+            const currency = stockProduct.currency;
+            const totalPrice = quantity * unitPrice;
+            const description = stockProduct.description;
 
             inputValidations(container);
 
             const product = {
                 name,
                 code,
-                lot,
                 manufacturer,
                 quantity,
                 unit,
                 unitPrice,
                 currency,
                 totalPrice,
-                alertAmounts,
-                description,
+                description
             }
 
             return product;
@@ -477,6 +402,138 @@ const infoExtractor = (container, purpose) => {
             return 'caso invalido';
     }
 };
+
+//Busca y muestra sugerencias de busqueda del input y ademas añade un tipo de funcionalidad al seleccionar una coincidencia en base al parametro que se les pase
+const searchAndDisplay = (input, value, productsFounds, productsList, inputsList, itsModal) => {
+    //Si el input esta vacio se vacia la lista que contiene las coincidencias
+    if (value === '') {
+        productsFounds.innerHTML = '';
+    } else {
+        productsFounds.innerHTML = '';
+        //Despues de limpiar la lista iterar sobre todos los productos de la lista de stock para encontrar todos aquellos que coincidan con la busqueda y añadirlos a la lista por medio de un div
+        for (const product of productsList) {
+            //Crear li, agregar clases y añadirlo a la lista de productos encontrados en caso de que su nombre coincida con el valor del input
+            if (product.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+                || product.code.toLocaleLowerCase().includes(value.toLocaleLowerCase())) {
+                //Extraer la fecha del producto y transformarla al formato a renderizar
+                const date = product.date?.split('T')[0].split('-').reverse().join('/');
+
+                //Crear li, aplicar sus clases, definir su contenido HTML y agregarlo al contenedor de coincidencias todo dependiendo del caso (buscador en modal o bucador general)
+                const li = document.createElement('li');
+                li.classList.add('w-full', 'h-fit', 'py-1', `${itsModal ? 'odd:bg-[#09041C]/90' : 'odd:bg-[#09041C]/30'}`, 'even:bg-[#09041C]/0');
+                li.innerHTML = `<button type="button" class="w-full px-2">${product.name} ${product.code} ${itsModal ? '' : date}</button>`;
+                productsFounds.append(li);
+
+                //Agregar evento de click a la lista para detectar los click sobre los nombres de los productos y mover el scroll de la lista hasta llegar a dicho producto
+                li.addEventListener('mousedown', e => {
+                    const item = product;
+
+                    //Agregamos la informacion correspondiente a cada input segun la seleccion de alguno de ellos
+                    if (itsModal) {
+                        //seleccionar los inputs de nombre y codigo
+                        const nameSelect = inputsList.children[1].children[0];
+                        const codeSelect = inputsList.children[1].children[1];
+
+                        //Añadir valores dependiendo de la seleccion de alguno de ellos
+                        for (const option of codeSelect.children) {
+                            if (item.code === option.value) {
+                                option.selected = true;
+                            }
+                        }
+                        for (const option of nameSelect.children) {
+                            if (item.name === option.value) {
+                                option.selected = true;
+                            }
+                        }
+                    } else {
+                        //A partir del producto seleccionado del array de SALES, buscar a cual elemento html renderizado pertenece para hacer scroll hasta donde este
+                        //Seleccionar la lista de productos renderizados en el HTML
+                        const listElements = tablesContainer.children[0].children[1].children;
+                        const itemDate = date;
+
+                        //Buscar en la coleccion HTML mediante el codigo y la fecha del producto seleccionado
+                        for (const element of listElements) {
+                            if (element.children[6].textContent === itemDate && element.children[1].textContent === item.code) {
+                                //Hacer scroll hasta el elemento seleccionado en caso de que la busqueda sea en la vista general
+                                element.scrollIntoView({ behavior: "smooth", block: "center" });
+                                break;
+                            }
+                        }
+                    }
+
+                    //Vaciar tanto el input como la lista de coincidencias
+                    input.value = '';
+                    productsFounds.innerHTML = '';
+                });
+            }
+        };
+    }
+};
+const searchContainerContraccion = (input, productsFounds) => {
+    setTimeout(() => {
+        if (input.value != '') {
+            productsFounds.classList.add('h-0');
+        }
+    }, 150);
+
+    if (phoneResolution) {
+        //Reducir el width del contenedor padre cuando se deja de hacer focus
+        input.parentElement.classList.remove('w-full');
+        //Expandir el width y mostrar el boton de añadir cuando se deja de hacer focus
+        setTimeout(() => {
+            //Usar setTimeout para evitar distorciones mientras ambos botones cambian su tamaño en resoluciones de telefono
+            input.parentElement.parentElement.children[1]?.classList.remove('w-0', 'hidden');
+        }, 100);
+    }
+};
+const searchContainerExpansion = (input, productsFounds, itsModal) => {
+    if (productsFounds.classList.contains('h-0')) productsFounds.classList.remove('h-0');
+
+    //Expandir el width del contenedor padre cuando se hace focus
+    input.parentElement.classList.add('w-full');
+
+    //Reducir el width y esconder el boton de añadir cuando se hace focus
+    if (!itsModal && phoneResolution) searchInput.parentElement.parentElement.children[1]?.classList.add('w-0', 'hidden');
+};
+
+//Se detecta cada vez que se escribe en el input y se buscan los productos mediante su nombre o codigo para añadirlos a la lista de coincidencias
+searchInputEdit.addEventListener('input', e => {
+    searchAndDisplay(searchInputEdit, e.target.value, productsFoundsEdit, stockArray, editList, true);
+});
+//Al dejar de hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se contrae
+searchInputEdit.addEventListener('focusout', e => {
+    searchContainerContraccion(searchInputEdit, productsFoundsEdit);
+});
+//Al hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se expando hasta la altura de su contenido
+searchInputEdit.addEventListener('focusin', e => {
+    searchContainerExpansion(searchInputEdit, productsFoundsEdit, true);
+});
+
+//Se detecta cada vez que se escribe en el input y se buscan los productos mediante su nombre o codigo para añadirlos a la lista de coincidencias
+searchInputAdd.addEventListener('input', e => {
+    searchAndDisplay(searchInputAdd, e.target.value, productsFoundsAdd, stockArray, list, true);
+});
+//Al dejar de hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se contrae
+searchInputAdd.addEventListener('focusout', e => {
+    searchContainerContraccion(searchInputAdd, productsFoundsAdd);
+});
+//Al hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se expando hasta la altura de su contenido
+searchInputAdd.addEventListener('focusin', e => {
+    searchContainerExpansion(searchInputAdd, productsFoundsAdd, true);
+});
+
+//Se detecta cada vez que se escribe en el input y se buscan los productos mediante su nombre para añadirlos a la lista de coincidencias
+searchInput.addEventListener('input', e => {
+    searchAndDisplay(searchInput, e.target.value, productsFounds, productsArray, null, false)
+});
+//Al dejar de hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se contrae
+searchInput.addEventListener('focusout', e => {
+    searchContainerContraccion(searchInputAdd, productsFoundsAdd);
+});
+//Al hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se expando hasta la altura de su contenido
+searchInput.addEventListener('focusin', e => {
+    searchContainerExpansion(searchInputAdd, productsFoundsAdd, true);
+});
 
 //Selecciona el producto cliqueado para extraer su descripcion y añadirla al contenedor de descripciones
 tablesContainer.addEventListener('click', e => {
@@ -497,80 +554,12 @@ tablesContainer.addEventListener('click', e => {
 
     //Seleccionar el codigo y la fecha del producto para buscarlo dentro del array que contiene todos los productos 
     const productCode = tr?.children[1].textContent;
-    const productEntryDate = tr?.children[7].textContent;
-    const productObject = productsArray.find(product => product.code === productCode && product.date.split('T')[0].split('-').reverse().join('/') === productEntryDate);
+    const productObject = productsArray.find(product => product.code === productCode);
     //Asignar el valor encontrado en la descripcion del objeto del producto al mostrador de descripciones
-    if (productObject) deskDescription.textContent = productObject.description;    
-});
-
-//Se detecta cada vez que se escribe en el input y se buscan los productos mediante su nombre para añadirlos a la lista de coincidencias
-searchInput.addEventListener('input', e => {
-    //Si el input esta vacio se vacia la lista que contiene las coincidencias
-    if (e.target.value === '') {
-        productsFounds.innerHTML = '';
-    } else {
-        productsFounds.innerHTML = '';
-        //Despues de limpiar la lista iterar sobre todos los productos de la lista de entries para encontrar todos aquellos que coincidan con la busqueda y añadirlos a la lista por medio de un div
-        for (const product of phoneResolution ? tablesContainer.children : tablesContainer.children[0].children[1].children) {
-            let productName = '';
-            let productDate = '';
-            
-            //En caso de que la vista sea mobile se buscara en las cards y en caso de que sea destock se buscara en la tabla
-            if (phoneResolution) {
-                productName = product.children[0]?.children[0].children[1].textContent;
-                productDate = product.children[0]?.children[7].children[1].textContent;
-            } else {
-                productName = product.children[0]?.textContent;
-                productDate = product.children[7]?.textContent;
-            }
-
-            //Crear li, agregar clases y añadirlo a la lista de productos encontrados en caso de que su nombre coincida con el valor del input
-            if (productName && productName.toLocaleLowerCase().includes(e.target.value.toLocaleLowerCase())) {
-                const li = document.createElement('li');
-                li.classList.add('w-full', 'h-fit', 'py-1', 'odd:bg-black/20', 'even:bg-black/0');
-                li.innerHTML = `<button class="w-full px-2">${productName} ${productDate}</button>`;
-                productsFounds.append(li);
-
-                //Agregar evento de click a la lista para detectar los click sobre los nombres de los productos y mover el scroll de la lista hasta llegar a dicho producto
-                li.addEventListener('mousedown', e => {
-                    const item = product;
-                    
-                    item.scrollIntoView({ behavior: "smooth", block: "center" });
-
-                    searchInput.value = '';
-                    productsFounds.innerHTML = '';
-                });
-            }
-        };
-    }
-});
-//Al dejar de hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se contrae
-searchInput.addEventListener('focusout', e => {
-    setTimeout(() => {
-        if (searchInput.value != '') {
-            productsFounds.classList.add('h-0');
-        }
-    }, 150);
-
-    if (phoneResolution) {
-        //Reducir el width del contenedor padre cuando se deja de hacer focus
-        searchInput.parentElement.classList.remove('w-full');
-        //Expandir el width y mostrar el boton de añadir cuando se deja de hacer focus
-        setTimeout(() => {
-            //Usar setTimeout para evitar distorciones mientras ambos botones cambian su tamaño en resoluciones de telefono
-            searchInput.parentElement.parentElement.children[1]?.classList.remove('w-0', 'hidden');
-        }, 100);
-    }
-});
-//Al hacer focus en el input de busqueda si tiene un valor entonces la lista de coincidencias se expando hasta la altura de su contenido
-searchInput.addEventListener('focusin', e => {
-    if (productsFounds.classList.contains('h-0')) productsFounds.classList.remove('h-0');
-
-    if (phoneResolution) {
-        //Expandir el width del contenedor padre cuando se hace focus
-        searchInput.parentElement.classList.add('w-full');
-        //Reducir el width y esconder el boton de añadir cuando se hace focus
-        searchInput.parentElement.parentElement.children[1]?.classList.add('w-0', 'hidden');
+    if (productObject && productObject.description && productObject.description != '') {
+        deskDescription.textContent = productObject.description;
+    } else if (productObject) {
+        deskDescription.textContent = 'Sin descripcion';
     }
 });
 
@@ -586,20 +575,17 @@ editForm.addEventListener('submit', async e => {
     try {
         isValidForm = true;
 
-        const inputsContainer = editForm.children[0].children[0];
-        
+        const inputsContainer = editForm.children[0].children[1];
+
         const product = infoExtractor(inputsContainer, 'edit');
     
         if (isValidForm) {
-            await axios.patch(`/api/entries/${productFound.id}`, product);
+            await axios.patch(`/api/sales/${productFound.id}`, product);
 
             editModal.classList.add('hidden');
             productFound = '';
             loadProducts(phoneResolution);
         }
-
-        codes = []
-
     } catch (error) {
         console.log(error);
     }
@@ -612,15 +598,18 @@ editCancelBtn.addEventListener('click', e => {
 
 //Abre el modal de añadir salidas
 openModalBtn.addEventListener('click', e => {
-    list.firstElementChild.classList.add('selected', 'bg-white/70', 'opacity-100');
     addModal.classList.remove('hidden');
+
+    //seleccionar los inputs de nombre y codigo correspondientes al modal de añadir para enviarlos a la funcion
+    const nameSelect = list.children[1].children[0];
+    const codeSelect = list.children[1].children[1];
+
+    resetList(nameSelect, codeSelect, isAdd = true);
 });
 
 //Cierra el modal de añadir salidas
 cancelBtn.addEventListener('click', e => {
     addModal.classList.add('hidden');
-    productCount = 1;
-    resetList();
 });
 
 //Envia los datos añadidos al formulario de salidas
@@ -634,47 +623,16 @@ addform.addEventListener('submit', async e => {
     }, 5100);
 
     try {
-        listItemsUpdate();
-        let products = [];
-    
-        listItems.forEach(li => {
-            const product = infoExtractor(li, 'add');
-            
-            if (typeof product != 'string') products.push(product);
-        });
+        const product = infoExtractor(list.children[1], 'add');
         
         if (isValidForm) {
             //Se envia el array de productos a la api
-            await axios.post('/api/entries', products);
+            await axios.post('/api/sales', product);
             loadProducts(phoneResolution);
-            resetList();
             addModal.classList.add('hidden');
-            productCount = 1;
         }
-        
-        liCount = 0;
-        codes = [];
-        products = [];
     } catch (error) {
         console.log(error);
-    }
-});
-
-//Se activa cuando el usuario hace focus en algun text area de descripcion del formulario 
-list.addEventListener('focusin', e => {
-    if (e.target.classList.contains('description')) {
-        const parentDiv = e.target.parentElement;
-    
-        parentDiv.classList.remove('h-8');
-        parentDiv.classList.add('h-fit');
-    }
-});
-list.addEventListener('focusout', e => {
-    if (e.target.classList.contains('description')) {
-        const parentDiv = e.target.parentElement;
-    
-        parentDiv.classList.remove('h-fit');
-        parentDiv.classList.add('h-8');
     }
 });
 
@@ -710,6 +668,4 @@ window.onload = () => {
     }
     //Se llama a la funcion encargada de cargar los productos en las cards
     loadProducts(phoneResolution);
-    //Se llama a la funcion encargada de resetear la lista del modal
-    resetList();
 }

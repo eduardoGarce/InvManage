@@ -335,7 +335,7 @@ const loadProducts = async (phoneResolution) => {
                             <td class="w-1/2 text-base font-semibold text-center pt-2 pb-2">${date}</td>
                         </tr>
                         <tr class="text-center align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
-                            <td colspan="2" class="px-2 pb-6 text-white">${product.description}</td>
+                            <td colspan="2" class="p-2 text-white">${product.description && product.description != '' ? product.description : 'Sin descripcion'}</td>
                         </tr>
                         <tr class="align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
                             <td colspan="2" class="text-white font-semibold bg-[#09041C]/20 rounded-b-3xl">
@@ -356,7 +356,7 @@ const loadProducts = async (phoneResolution) => {
             
             //Añado el div que va a hacer de tope en el scroll
             const div = document.createElement('div');
-            div.classList.add('h-36', 'w-full');
+            div.classList.add('h-[15rem]', 'w-full');
             tablesContainer.append(div);
 
             activateEditBtn();
@@ -530,7 +530,11 @@ tablesContainer.addEventListener('click', e => {
     const productEntryDate = tr?.children[7].textContent;
     const productObject = productsArray.find(product => product.code === productCode && product.date.split('T')[0].split('-').reverse().join('/') === productEntryDate);
     //Asignar el valor encontrado en la descripcion del objeto del producto al mostrador de descripciones
-    if (productObject) deskDescription.textContent = productObject.description;    
+    if (productObject && productObject.description && productObject.description != '') {
+        deskDescription.textContent = productObject.description;
+    } else if (productObject) {
+        deskDescription.textContent = 'Sin descripcion';
+    }
 });
 
 //Se detecta cada vez que se escribe en el input y se buscan los productos mediante su nombre para añadirlos a la lista de coincidencias

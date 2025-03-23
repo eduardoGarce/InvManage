@@ -168,7 +168,6 @@ entriesRouter.patch('/:id', async (request, response) => {
         //Actualizar datos datos del producto en el stock
         await Stock.findOneAndUpdate({ code: codeEdit }, {
             name: nameEdit,
-            code: codeEdit, 
             manufacturer: manufacturerEdit,
             quantity: quantityNumber,
             unit: unitEdit,

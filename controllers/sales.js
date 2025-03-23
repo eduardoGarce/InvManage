@@ -16,7 +16,8 @@ salesRouter.post('/', async (request, response) => {
     const product = request.body;
     const date = new Date(new Date().getTime() - 4 * 60 * 60 * 1000);
 
-    const { name, code, manufacturer, quantity, unit, unitPrice, currency, totalPrice, description } = product[0];
+    const { name, code, manufacturer, quantity, unit, unitPrice, currency, totalPrice, description } = product;
+    
     const quantityNumber = Number(quantity);
     const unitPriceNumber = Number(unitPrice);
     const totalPriceNumber = Number(totalPrice);
@@ -36,14 +37,15 @@ salesRouter.post('/', async (request, response) => {
     });
 
     const savedSale = await newSale.save();
+    
     user.sales = user.sales.concat(savedSale._id);
     await user.save();
 
-    //Restar la cantidad que sale del producto en stock
-    await Stock.findOneAndUpdate({ code }, { $inc: { quantity: -quantityNumber }});
+    //Restar la cantidad que sale del producto en stock, el precio total y actualizar la fecha de su ultima salida
+    await Stock.findOneAndUpdate({ code }, { $inc: { quantity: -quantityNumber }, $inc: { totalPrice: -totalPriceNumber }, $set: { lastExitDate: date }});
 
     //Actualizar la propiedad isEditable de las entradas que posean los mismos codigos que el producto registrado en la salida, se usa $set porque de lo contrario todo el documento sería reemplazado
-    await Entry.updateMany({ codigo, isEditable: true }, { $set: { isEditable: false }});  
+    await Entrie.updateMany({ code, isEditable: true }, { $set: { isEditable: false }});  
 
     return response.sendStatus(200);
 })
@@ -52,6 +54,7 @@ salesRouter.patch('/:id', async (request, response) => {
     const user = request.user;
     const id = request.params.id;
     const date = new Date(new Date().getTime() - 4 * 60 * 60 * 1000);
+    const productOriginal = await Sale.findById(id)
 
     const { nameEdit, codeEdit, manufacturerEdit, quantityEdit, unitEdit, unitPriceEdit, currencyEdit, totalPriceEdit, descriptionEdit } = request.body;
     const quantityNumber = Number(quantityEdit);
@@ -75,10 +78,17 @@ salesRouter.patch('/:id', async (request, response) => {
         description: descriptionEdit
     });
 
-    if (stockProduct.code != codeEdit) {
-        await Stock.findOneAndUpdate({ code: stockProduct.code }, { $inc: { quantity: +quantityNumber }}, { $inc: { totalPrice: +totalPriceNumber }})
+    //Si existe otro producto en stock que comparta el nuevo codigo de la salida editada actualizamos los datos del antiguo y del nuevo producto
+    if (stockProduct) {
+        //Actualizar la cantidad y el valor total del antiguo producto que compartia el mismo codigo original en stock
+        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: +productOriginal.quantity }, $inc: { totalPrice: +productOriginal.totalPrice }});
+        //Actualizar la cantidad y el valor total del producto que comparte el mismo codigo editado en stock
+        await Stock.findOneAndUpdate({ code: codeEdit }, { $inc: { quantity: -quantityNumber }, $inc: { totalPrice: -totalPriceNumber }, $get: { lastExitDate: date }});
     } else {
-        
+        //Sumar la cantidad original que le fue restada para llevarlo a la cantidad que tenia posterior a la salida
+        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: +productOriginal.quantity }, $inc: { totalPrice: +productOriginal.totalPrice }});
+        //Restar a la cantidad y precio total del producto sus datos editados
+        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: -quantityNumber }, $inc: { totalPrice: -totalPriceNumber }, $get: { lastExitDate: date }});
     }
 
     return response.sendStatus(200);

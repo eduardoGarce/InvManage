@@ -13,90 +13,25 @@
         <!-- Modal para editar productos -->
         <div id="edit-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
             <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
-                <form id="edit-form" class="flex flex-col justify-center w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 gap-8 rounded-3xl bg-transparent transition-all">
-                    <div class="md:flex md:justify-center md:items-center w-full h-fit bg-transparent transition-all">
-                        <div class="flex flex-col md:flex-row md:flex-wrap md:items-center justify-center gap-x-4 px-6 mx-auto h-full md:h-fit w-full max-w-[25rem] md:max-w-[44rem] text-center">
-                            <p class="mb-8 w-full text-md md:text-lg font-semibold text-center text-white md:border-b-2 md:border-white">Editado por ultima vez el 02/12/2025</p>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="name0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
-                                <label for="name0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Nombre</label>
-                            </div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="code0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
-                                <label for="code0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Codigo</label>
-                            </div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="lot0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
-                                <label for="lot0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Lote</label>
-                            </div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[20rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="manufacturer0" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none transition-all">
-                                <label for="manufacturer0" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Fabricante</label>
-                            </div>
-                            <div class="flex flex-row justify-between h-fit w-full md:max-w-[20rem] mb-6 pr-2 rounded-full bg-white text-[#09041C]">
-                                <div class="max-h-8 w-full">
-                                    <input type="number" placeholder="" id="quantity0" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                                    <label for="quantity0" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Cantidad</label>
-                                </div>
-                                <select id="select-unid" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center bg-transparent text-[#09041C]">
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Uni.">Uni.</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="N/A">N/A</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="kg">kg</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="g">g</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mg">mg</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lb">lb</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="oz">oz</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ton">ton</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lts">Lts</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ml">ml</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m³">m³</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm³">cm³</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m">m</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm">cm</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mm">mm</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ft">ft</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="in">in</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="paq">paq</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="doc">doc</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cajas">Cajas</option>
-                                </select>
-                            </div>
-                            <div class="flex flex-row justify-between h-fit w-full md:max-w-[20rem] mb-6 pr-2 rounded-full bg-white text-[#09041C]">
-                                <div class="max-h-8 w-full">
-                                    <input type="number" placeholder="" id="unit-price0" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                                    <label for="unit-price0" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Precio uni.</label>
-                                </div>
-                                <select id="select-currency" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center bg-transparent text-[#09041C]">
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="$">$</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="€">€</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Bs">Bs</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ARS">ARS</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="COP">COP</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="MXN">MXN</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PEN">PEN</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CLP">CLP</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BRL">BRL</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="UYU">UYU</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PYG">PYG</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="DOP">DOP</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="GTQ">GTQ</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CRC">CRC</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="HNL">HNL</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="NIO">NIO</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BOV">BOB</option>
-                                </select>
-                            </div>
+                <p class="text-lg font-semibold text-center text-white fixed top-[28%] md:w-[80%] 2xl:w-[65%] md:z-31">Editado por ultima vez el 02/02/2024</p>
+                <form id="edit-form" class="flex flex-col items-center justify-center w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 gap-2 rounded-3xl bg-transparent transition-all">
+                    <div id="edit-list" class="flex flex-col justify-center items-center w-full h-fit bg-transparent transition-all">
+                        <div class="flex md:block flex-col items-center relative w-full max-w-[19rem] md:max-w-[34rem] h-fit px-6 py-4 text-white transition-all">
+                            <input id="search-input-edit" type="text" placeholder="Buscar por nombre o codigo" 
+                                class="peer w-2/3 focus:w-full h-full text-md font-regular text-center md:text-start focus:text-white px-2 py-1 border-b-2 border-white/70 focus:border-white overflow-x-hidden outline-none transition-all bg-transparent">
+                            <ul id="products-founds-edit" class="flex flex-col absolute top-12 z-50 w-[85%] md:w-full max-w-[19rem] md:max-w-[31rem] h-fit max-h-[75vh] peer-focus:pb-4 rounded-b-xl bg-[#09041C]/70 backdrop-blur-2xl overflow-y-auto transition-all">
+                            </ul>
+                        </div>
+                        <div class="relative flex flex-col items-center w-full max-w-[19rem] h-fit px-6 py-4 gap-x-4 text-center rounded-xl md:flex-row md:flex-wrap md:max-w-[34rem]">
+                            <select class="mb-6 min-h-8 w-full focus:scale-x-105 text-[#09041C] py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all"></select>
+                            <select class="mb-6 min-h-8 w-full focus:scale-x-105 text-[#09041C] py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all"></select>
                             <div class="mb-6 max-h-8 w-full text-[#09041C]">
-                                <input type="number" placeholder="" id="alert-amount0" class="peer w-[97%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                                <label for="alert-amount0" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Minimo de alerta</label>
-                            </div>
-                            <div class="mb-4 max-h-28 w-full">
-                                <textarea placeholder="Descripcion" id="description"
-                                class="description w-full h-28 resize-none py-1 px-4 rounded-3xl bg-white outline-none text-base text-[#09041C] placeholder:text-center placeholder:text-[#09041C]/80"></textarea>
+                                <input type="number" min="1" placeholder="" id="quantity" class="peer w-full focus:scale-x-105 min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white [&::-webkit-inner-spin-button]:appearance-none outline-none transition-all">
+                                <label for="quantity" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Cantidad</label>
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-row gap-6 mx-auto py-4">
+                    <div class="flex flex-row gap-6 py-4">
                         <button type="button" id="edit-cancel-btn" class="px-4 md:px-8 xl:px-16 py-2 bg-white/90 hover:bg-white rounded-full text-lg text-[#09041C] font-semibold hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">Cancelar</button>
                         <input type="submit" id="edit-submit" value="Editar" class="px-4 md:px-8 xl:px-16 py-2 border-2 border-white/90 hover:border-white rounded-full text-lg text-white/90 hover:text-white font-semibold cursor-pointer hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">
                     </div>
@@ -106,89 +41,23 @@
         <!-- Modal para añadir productos -->
         <div id="add-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
             <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
-                <p class="text-lg font-semibold text-center text-white md:fixed md:top-[13%] md:border-b-2 md:w-[80%] 2xl:w-[65%] md:z-31">Añada los datos de la salida</p>
-                <form id="add-form" class="flex flex-col w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 rounded-3xl bg-transparent">
-                    <div id="list" class="flex flex-row flex-wrap justify-center gap-2 py-4 md:pt-0 md:mt-24 px-5 h-full overflow-y-auto">
-                        <li class="relative flex flex-col w-full max-w-[19rem] h-fit px-6 pb-4 pt-4 gap-x-4 bg-white/30 opacity-80 text-center rounded-xl md:flex-row md:flex-wrap md:max-w-[34rem]">
-                            <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center text-white hidden"></div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="name" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                                <label for="name" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Nombre</label>
-                            </div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="code" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                                <label for="code" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Codigo</label>
-                            </div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="lot" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                                <label for="lot" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Lote</label>
-                            </div>
-                            <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
-                                <input type="text" placeholder="" id="manufacturer" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
-                                <label for="manufacturer" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3  transition-all">Fabricante</label>
-                            </div>
-                            <div class="flex flex-row justify-between h-fit w-full md:max-w-[15rem] mb-6 pr-2 rounded-full bg-white text-[#09041C] border-2 border-white">
-                                <div class="max-h-8 w-full">
-                                    <input type="number" placeholder="" id="quantity" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                                    <label for="quantity" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Cantidad</label>
-                                </div>
-                                <select id="select-unid" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center full bg-transparent text-[#09041C]">
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Uni.">Uni.</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="N/A">N/A</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="kg">kg</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="g">g</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mg">mg</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lb">lb</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="oz">oz</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ton">ton</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="lts">Lts</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ml">ml</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m³">m³</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm³">cm³</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="m">m</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cm">cm</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="mm">mm</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ft">ft</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="in">in</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="paq">paq</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="doc">doc</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="cajas">Cajas</option>
-                                </select>
-                            </div>
-                            <div class="flex flex-row justify-between h-fit w-full md:max-w-[15rem] mb-6 pr-2 rounded-full bg-white text-[#09041C] border-2 border-white">
-                                <div class="max-h-8 w-full">
-                                    <input type="number" placeholder="" id="unit-price" class="peer w-full min-h-6 py-1 px-4 rounded-full bg-transparent outline-none [&::-webkit-inner-spin-button]:appearance-none">
-                                    <label for="unit-price" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Precio uni.</label>
-                                </div>
-                                <select id="select-currency" class="w-[35%] max-h-8 my-1 border-l-2 outline-none text-center full bg-transparent text-[#09041C]">
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="$">$</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="€">€</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="Bs">Bs</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="ARS">ARS</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="COP">COP</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="MXN">MXN</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PEN">PEN</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CLP">CLP</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BRL">BRL</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="UYU">UYU</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="PYG">PYG</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="DOP">DOP</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="GTQ">GTQ</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="CRC">CRC</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="HNL">HNL</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="NIO">NIO</option>
-                                    <option class="text-black/90 odd:bg-black/10 even:bg-black/0 backdrop-blur-2xl" value="BOV">BOB</option>
-                                </select>
-                            </div>
+                <p class="text-lg font-semibold text-center text-white fixed top-[30%] md:w-[80%] 2xl:w-[65%] md:z-31">Añada los datos de la salida</p>
+                <form id="add-form" class="flex flex-col justify-center w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 rounded-3xl bg-transparent">
+                    <div id="list" class="flex flex-col items-center justify-center gap-2 py-4 md:py-0 md:mt-8 px-5 h-fit">
+                        <div class="flex md:block flex-col items-center relative w-full max-w-[19rem] md:max-w-[34rem] h-fit px-6 py-4 text-white transition-all">
+                            <input id="search-input-add" type="text" placeholder="Buscar por nombre o codigo" 
+                                class="peer w-2/3 focus:w-full h-full text-md font-regular text-center md:text-start focus:text-white px-2 py-1 border-b-2 border-white/70 focus:border-white overflow-x-hidden outline-none transition-all bg-transparent">
+                            <ul id="products-founds-add" class="flex flex-col absolute top-12 z-50 w-[85%] md:w-full max-w-[19rem] md:max-w-[31rem] h-fit max-h-[75vh] peer-focus:pb-4 rounded-b-xl bg-[#09041C]/70 backdrop-blur-2xl overflow-y-auto transition-all">
+                            </ul>
+                        </div>
+                        <div class="relative flex flex-col items-center w-full max-w-[19rem] h-fit px-6 py-4 gap-x-4 text-center rounded-xl md:flex-row md:flex-wrap md:max-w-[34rem]">
+                            <select class="mb-6 min-h-8 w-full focus:scale-x-105 text-[#09041C] py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all"></select>
+                            <select class="mb-6 min-h-8 w-full focus:scale-x-105 text-[#09041C] py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all"></select>
                             <div class="mb-6 max-h-8 w-full text-[#09041C]">
-                                <input type="text" placeholder="" id="alert-amount" class="peer w-[97%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none [&::-webkit-inner-spin-button]:appearance-none transition-all">
-                                <label for="alert-amount" class="relative bottom-12 text-black transition-all peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3">Minimo de alerta</label>
+                                <input type="number" min="1" placeholder="" id="quantity" class="peer w-full focus:scale-x-105 min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white [&::-webkit-inner-spin-button]:appearance-none outline-none transition-all">
+                                <label for="quantity" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Cantidad</label>
                             </div>
-                            <div class="mb-4 h-8 w-full text-[#09041C]">
-                                <textarea placeholder="Descripcion" id="description" 
-                                class="description w-full min-h-6 h-9 focus:h-28 resize-none py-1 px-4 bg-white rounded-3xl border-2 border-white/90 outline-none text-base placeholder:text-[#09041C] placeholder:text-center"></textarea>
-                            </div>
-                        </li>
+                        </div>
                     </div>
                     <div class="flex flex-row gap-6 mx-auto py-4">
                         <button type="button" id="cancel-btn" class="px-4 md:px-8 xl:px-16 py-2  bg-white/90 hover:bg-white rounded-full text-lg text-[#09041C] font-semibold hover:translate-y-[-0.2rem] hover:shadow-[0px_8px_8px_rgba(9,4,28,0.2)] transition-all">Cancelar</button>

@@ -16,19 +16,19 @@ stockRouter.get('/top-bottom', async (request, response) => {
 
         //Filtrar las salidas en los ultimos 30 días, $gte significa igual o mayor que, accede a la propiedad date de cada producto y comprobando si es mayor o igual a la fecha de comparacion
         const salesLastMonth = await Sale.find({ date: { $gte: lastDateComparation } });
-
+        
         //Contar cuántas veces se ha registrado cada producto
-        const productCounts = salesLastMonth.reduce((acc, salida) => {
-        acc[salida.codigo] = (acc[salida.codigo] || 0) + 1;
-        return acc;
+        const productCounts = salesLastMonth.reduce((acc, sale) => {
+            //acc es el contador y salida representa el editable actual, declara que el contador sera un objeto con el valor de codigo como nombre de la propiedad sumandole 1 por cada vez que lo encuentre
+            acc[sale.code] = (acc[sale.code] || 0) + 1;
+            //Retornar el contador actualizado para guardarlo
+            return acc;
         }, {});
-        console.log(productCounts);
 
         //Convertir a array y ordenar
         const sortedProducts = Object.entries(productCounts)
-        .map(([codigo, count]) => ({ codigo, count }))
+        .map(([code, count]) => ({ code, count }))
         .sort((a, b) => b.count - a.count);
-        console.log(sortedProducts);
 
         //Tomar los 3 productos con más y menos ventas
         const top3 = sortedProducts.slice(0, 3);

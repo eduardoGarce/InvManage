@@ -11,6 +11,8 @@ let isWideScreen = window.innerWidth > 1023;
 let phoneResolution = !isWideScreen;
 //Guarda el array de productos pertenecientes al stock
 let productsArray = [];
+//Guarda el top3 de los productos mas vendidos y los 3 menos vendidos
+let topBottomProducts = [];
 
 //Funcion que se encarga de cargar todos los productos en las cards y renderizarlas
 const loadProducts = async (phoneResolution) => {
@@ -22,6 +24,9 @@ const loadProducts = async (phoneResolution) => {
 
         //Guardar el array en la variable temporal externa
         productsArray = data;
+        //Pëdir a la api el top 3 de los productos con mas salidas y el top 3 de productos ocn menos salidas y asignarlos a una variable externa
+        const response = await axios.get('/api/stock/top-bottom');
+        topBottomProducts = response.data;
 
         //Se itera sobre cada objeto del array con los productos para renderizarlos en la lista
         tablesContainer.innerHTML = '';
@@ -117,7 +122,7 @@ const loadProducts = async (phoneResolution) => {
                 } else {
                     bgColor = 'bg-[#F23F3F]/10';
                 }
-    
+
                 //Creo la tabla, le agrego un id, una clase y el contenido html que va a tener
                 const table = document.createElement('table');
                 table.id = product.id;
@@ -161,7 +166,7 @@ const loadProducts = async (phoneResolution) => {
                             <td class="w-1/2 text-base font-semibold text-center pt-2 pb-2">${lastExitDate}</td>
                         </tr>
                         <tr class="text-center align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
-                            <td colspan="2" class="px-2 pb-6 text-white">${product.description}</td>
+                            <td colspan="2" class="p-2 text-white">${product.description && product.description != '' ? product.description : 'Sin descripcion'}</td>
                         </tr>
                     </tbody>
                 `;
@@ -271,7 +276,7 @@ const scrollToProduct = (id) => {
 };
 
 //Evento que renderiza el contenido de la infoBar dependiendo del boton cliqueado, se estan seleccionando los botones al principio del evento
-generalInfoBtn.parentElement.children[1].addEventListener('click', e => {
+generalInfoBtn.parentElement.children[1].addEventListener('click', async e => {
     const button = e.target.closest('button');
     const generalInfoContainer = button.parentElement.parentElement.children[2];
     const generalInfoBtns = button.parentElement;
@@ -298,18 +303,18 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', e => {
         //renderizar la estructura donde van a ir los li que contendran a los productos
         generalInfoContainer.innerHTML = `
             <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
-                <ul class="flex flex-wrap justify-center items-center gap-2 w-full max-h-[55vh] overflow-y-auto"></ul>
+                <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
             </div>
         `;
 
-        //Filtrar y asignar a constantes todos los productos que esten bajo el umbral de alerta maxima 
-        const productsCriticAlert = productsArray.filter(product => product.quantity <= Number(product.alertAmounts[1]) && product.quantity > Number(product.alertAmounts[0]));
-        const productsMinimumAlert = productsArray.filter(product => product.quantity < Number(product.alertAmounts[0]));
+        //Filtrar y asignar a constantes todos los productos que esten bajo el umbral de alerta maxima
+        const productsMinimumAlert = productsArray.filter(product => product.quantity <= product.alertAmounts[1] && product.quantity > product.alertAmounts[0]);
+        const productsCriticAlert = productsArray.filter(product => product.quantity < product.alertAmounts[0]);
 
         //En caso de que no existan productos bajo el umbral de alerta entonces se mostrara un mensaje y si no, se renderizaran los productos
         if (!productsCriticAlert && !productsMinimumAlert) {
             const li = document.createElement('li');
-            li.classList.add('w-[18%]', 'mb-4', 'rounded-xl', 'bg-white/20');
+            li.classList.add('w-[18%]', 'min-w-[10rem]', 'mb-4', 'rounded-xl', 'bg-white/20');
             li.innerHTML = `<p class="flex justify-center items-center size-full p-2">Actualmente no hay productos con bajo stock</p>`;
             generalInfoContainer.children[0].children[0].append(li);
 
@@ -318,7 +323,7 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', e => {
             productsMinimumAlert?.forEach(product => {
                 const li = document.createElement('li');
                 li.id = product.id;
-                li.classList.add('w-[18%]', 'my-4', 'rounded-xl', 'bg-white/20', 'hover:bg-white/30', 'hover:scale-105', 'transition-all');
+                li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/30', 'hover:bg-[#F23F3F]/40', 'hover:scale-105', 'transition-all');
                 li.innerHTML = `
                     <button class="flex flex-col items-center size-full p-2">
                         <p class="border-b-2 border-white/40 w-full pb-1">${product.name}</p>
@@ -338,7 +343,7 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', e => {
             productsCriticAlert?.forEach(product => {
                 const li = document.createElement('li');
                 li.id = product.id;
-                li.classList.add('w-[18%]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
+                li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
                 li.innerHTML = `
                     <button class="flex flex-col items-center size-full p-2">
                         <p class="border-b-2 border-white/40 w-full pb-1">${product.name}</p>
@@ -356,7 +361,69 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', e => {
             });
         }
     } else if (button.textContent == 'Productos mas vendidos' && button.classList.contains('selected')) {
+        //renderizar la estructura donde van a ir los li que contendran a los productos
+        generalInfoContainer.innerHTML = `
+            <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
+                <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
+            </div>
+        `;
+
+        //Extraer de la variable el top 3 de productos mas vendidos
+        const { top3 } = topBottomProducts;
+
+        top3.forEach(product => {
+            const productName = productsArray.find(item => item.code === product.code).name;
+
+            const li = document.createElement('li');
+            li.id = product.id;
+            li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-white/20', 'hover:bg-white/30', 'hover:scale-105', 'transition-all');
+            li.innerHTML = `
+                <button class="flex flex-col items-center size-full p-2">
+                    <p class="border-b-2 border-white/40 w-full pb-1">${productName}</p>
+                    <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
+                    <p class="w-full pb-1">Salidas el ultimo mes: ${product.count}</p>
+                </button>
+            `;
+            generalInfoContainer.children[0].children[0].append(li);
+
+            //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
+            li.addEventListener('click', e => {
+                if (e.target.closest('li')) scrollToProduct(li.id);
+                toggleGeneralInfo();
+            });
+        });
     } else if (button.textContent == 'Productos menos vendidos' && button.classList.contains('selected')) {
+        //renderizar la estructura donde van a ir los li que contendran a los productos
+        generalInfoContainer.innerHTML = `
+            <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
+                <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
+            </div>
+        `;
+
+        //Extraer de la variable el top 3 de productos mas vendidos
+        const { bottom3 } = topBottomProducts;
+
+        bottom3.forEach(product => {
+            const productName = productsArray.find(item => item.code === product.code).name;
+
+            const li = document.createElement('li');
+            li.id = product.id;
+            li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
+            li.innerHTML = `
+                <button class="flex flex-col items-center size-full p-2">
+                    <p class="border-b-2 border-white/40 w-full pb-1">${productName}</p>
+                    <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
+                    <p class="w-full pb-1">Salidas el ultimo mes: ${product.count}</p>
+                </button>
+            `;
+            generalInfoContainer.children[0].children[0].append(li);
+
+            //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
+            li.addEventListener('click', e => {
+                if (e.target.closest('li')) scrollToProduct(li.id);
+                toggleGeneralInfo();
+            });
+        });
     } else if (button.children[0]) {
         toggleGeneralInfo();
     }
@@ -388,7 +455,11 @@ tablesContainer.addEventListener('click', e => {
     const productCode = tr?.children[1].textContent;
     const productObject = productsArray.find(product => product.code === productCode);
     //Asignar el valor encontrado en la descripcion del objeto del producto al mostrador de descripciones
-    if (productObject) deskDescription.textContent = productObject.description;
+    if (productObject && productObject.description && productObject.description != '') {
+        deskDescription.textContent = productObject.description;
+    } else if (productObject) {
+        deskDescription.textContent = 'Sin descripcion';
+    }
 });
 
 //Se detecta cada vez que se escribe en el input y se buscan los productos mediante su nombre para añadirlos a la lista de coincidencias
