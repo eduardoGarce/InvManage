@@ -35,7 +35,7 @@ Registro y login con verificación por correo electrónico.
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/eduardoGarce/InvManage.git
 cd InvManage
 ```
 
