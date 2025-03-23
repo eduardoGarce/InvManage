@@ -87,7 +87,7 @@ El proyecto utiliza JWT y cookies para la autenticación:
 
 ---
 
-## ** Uso básico**
+## **Uso básico**
 
 - /register → Registro de usuarios con validación de correo.
 - /login → Inicio de sesión.
