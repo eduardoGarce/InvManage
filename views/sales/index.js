@@ -563,7 +563,7 @@ tablesContainer.addEventListener('click', e => {
     }
 });
 
-//Agrega el evento de submit y envia todos los datos editados a la api 
+//Enkvia todos los datos de los inputs a infoextractor para posteriormente enviarlos a la api
 editForm.addEventListener('submit', async e => {
     e.preventDefault();
 

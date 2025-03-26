@@ -11,12 +11,14 @@ salesRouter.get('/', async (request, response) => {
 })
 
 salesRouter.post('/', async (request, response) => {
+    console.log(request.body);
     //Extraer usuario y añadir el array de productos a una constante
     const user = request.user;
     const product = request.body;
     const date = new Date(new Date().getTime() - 4 * 60 * 60 * 1000);
 
     const { name, code, manufacturer, quantity, unit, unitPrice, currency, totalPrice, description } = product;
+    console.log('hola');
     
     const quantityNumber = Number(quantity);
     const unitPriceNumber = Number(unitPrice);
@@ -35,14 +37,18 @@ salesRouter.post('/', async (request, response) => {
         description,
         user: user._id
     });
+    console.log('hola');
 
     const savedSale = await newSale.save();
     
     user.sales = user.sales.concat(savedSale._id);
     await user.save();
+    
+    const a = await Stock.find({code});
+    console.log(a);
 
     //Restar la cantidad que sale del producto en stock, el precio total y actualizar la fecha de su ultima salida
-    await Stock.findOneAndUpdate({ code }, { $inc: { quantity: -quantityNumber }, $inc: { totalPrice: -totalPriceNumber }, $set: { lastExitDate: date }});
+    await Stock.findOneAndUpdate({ code }, { $inc: { quantity: -quantityNumber, totalPrice: -totalPriceNumber }, $set: { lastExitDate: date }});
 
     //Actualizar la propiedad isEditable de las entradas que posean los mismos codigos que el producto registrado en la salida, se usa $set porque de lo contrario todo el documento sería reemplazado
     await Entrie.updateMany({ code, isEditable: true }, { $set: { isEditable: false }});  
