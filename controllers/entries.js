@@ -96,14 +96,14 @@ entriesRouter.post('/', async (request, response) => {
         const alertsNumber = alertAmounts.map(Number);
 
         //Comprobar que todos los datos sean diferentes de null o undefine
-        if (!name || !code || !lot || !manufacturer || !quantity || !unit || !unitPrice || !currency || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2] || !description) {
+        if (!name || !code || !lot || !manufacturer || !quantity || !unit || !unitPrice || !currency || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2]) {
             return response.status(400).json({ error:'Todos los datos son requeridos' });
         }
         //Comprobar que los valores numericos sean diferentes de NaN
-        if (!quantityNumber || !unitPriceNumber || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2]) {
+        if (!quantityNumber || !unitPriceNumber || !totalPriceNumber || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2]) {
             return response.status(400).json({ error:'El precio unitario, el precio total, la cantidad y los numeros de alerta deben ser números validos' });
         }
-        if (quantityNumber < 1 || unitPriceNumber < 1 || totalPrice < 1 || alertAmounts[0] < 1 || alertAmounts[1] < 1 || alertAmounts[2] < 1) {
+        if (quantityNumber < 1 || unitPriceNumber < 1 || totalPriceNumber < 1 || alertAmounts[0] < 1 || alertAmounts[1] < 1 || alertAmounts[2] < 1) {
             return response.status(400).json({ error:'Los datos numéricos deben de ser valores positivos mayores que 0' });
         }
 
@@ -202,8 +202,9 @@ entriesRouter.patch('/:id', async (request, response) => {
 
     //Comprobar si el codigo fue editado para determinar si se deben eliminar o crear datos en la coleccion stock
     if (productOriginal.code === codeEdit) {
-        //Calcular la nueva cantidad del producto editado
-        const productStockOriginal = Stock.find({ code: codeEdit });
+        //Calcular la nueva cantidad del producto editado        
+        const productStockOriginal = await Stock.findOne({ code: productOriginal.code });
+
         const quantityUpdate = (productStockOriginal.quantity - productOriginal.quantity) + quantityNumber;
         const totalPriceUpdate = (productStockOriginal.totalPrice - productOriginal.totalPrice) + totalPriceNumber;
 
