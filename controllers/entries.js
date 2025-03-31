@@ -175,10 +175,10 @@ entriesRouter.patch('/:id', async (request, response) => {
         return response.status(400).json({ error:'Todos los datos son requeridos' });
     }
     //Comprobar que los valores numericos sean diferentes de NaN
-    if (!quantityNumber || !unitPriceNumber || !totalPrice || !alertAmountsEdit[0] || !alertAmountsEdit[1] || !alertAmountsEdit[2]) {
+    if (!quantityNumber || !unitPriceNumber || !totalPriceNumber || !alertAmountsEdit[0] || !alertAmountsEdit[1] || !alertAmountsEdit[2]) {
         return response.status(400).json({ error:'El precio unitario, el precio total, la cantidad y los numeros de alerta deben ser números validos' });
     }
-    if (quantityNumber < 1 || unitPriceNumber < 1 || totalPrice < 1 || alertAmountsEdit[0] < 1 || alertAmountsEdit[1] < 1 || alertAmountsEdit[2] < 1) {
+    if (quantityNumber < 1 || unitPriceNumber < 1 || totalPriceNumber < 1 || alertAmountsEdit[0] < 1 || alertAmountsEdit[1] < 1 || alertAmountsEdit[2] < 1) {
         return response.status(400).json({ error:'Los datos numéricos deben de ser valores positivos mayores que 0' });
     }
 
