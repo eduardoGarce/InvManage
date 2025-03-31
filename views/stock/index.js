@@ -25,7 +25,7 @@ const loadProducts = async (phoneResolution) => {
         //Guardar el array en la variable temporal externa
         productsArray = data;
         //Pëdir a la api el top 3 de los productos con mas salidas y el top 3 de productos ocn menos salidas y asignarlos a una variable externa
-        const response = await axios.get('/api/stock/top-bottom');
+        const response = await axios.get('/api/sales/top-bottom');
         topBottomProducts = response.data;
 
         //Se itera sobre cada objeto del array con los productos para renderizarlos en la lista
@@ -73,6 +73,8 @@ const loadProducts = async (phoneResolution) => {
                 //Creo el tr, le agrego un id, una clase y el contenido html que va a tener
                 const tr = document.createElement('tr');
 
+                //Añadir un hover con un mensaje de alerta en caso de que el producto se encuentre bajo el umbral de alerta
+                if (product.quantity <= Number(product.alertAmounts[2])) tr.title = 'Este producto debe ser reabastecido';
                 //Asignar el color correspondiente del semaforo
                 tr.classList.add(`${bgColor}`, 'relative', 'transition-all');
                 tr.id = product.id;
@@ -181,8 +183,7 @@ const loadProducts = async (phoneResolution) => {
             tablesContainer.append(div);
         }
     } catch (error) {
-        // window.location.pathname = '/login';
-        console.log(error);
+        window.location.pathname = '/login';
         
     }
 };
@@ -268,7 +269,7 @@ const generalInfoStylized = (button, generalInfoContainer, generalInfoBtns, firs
 
 //Se encarga de hacer scroll hasta el producto que encuentre en base al id que se pase como parametro
 const scrollToProduct = (id) => {
-    const products = document.querySelector('#tbody').children;
+    const products = phoneResolution ? tablesContainer.children : document.querySelector('#tbody').children;
 
     for (const product of products) {
         if (product.id === id) product.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -290,69 +291,136 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', async e => {
         const totalProducts = phoneResolution ? tablesContainer.children.length - 1 : document.querySelector('#tbody').children.length - 1;
         generalInfoContainer.innerHTML = '';
 
-        const div = document.createElement('div');
-        div.classList.add('flex', 'flex-wrap', 'justify-center', 'items-center', 'w-full', 'h-fit', 'p-4', 'text-white');
+        if (totalProducts < 1) {
+            //renderizar un mensaje informativo indicando que no existen productos en stock
+            generalInfoContainer.innerHTML = `<div class="flex flex-wrap justify-center items-center w-full h-fit p-4 text-white"></div>`;
 
-        div.innerHTML = `
-            <p class="font-regular text-lg text-center px-2">Cantidad total de productos en el stock:</p>
-            <p class="font-regular text-lg text-center px-2">${totalProducts}</p>
-        `;
-        generalInfoContainer.append(div);
+            const span = document.createElement('span');
+            span.classList.add('font-regular', 'text-lg', 'text-center', 'px-2', 'size-full');
+            span.textContent = 'No existen productos en el stock';
+            generalInfoContainer.children[0].append(span);
+
+        } else {
+            const div = document.createElement('div');
+            div.classList.add('flex', 'flex-wrap', 'justify-center', 'items-center', 'w-full', 'h-fit', 'p-4', 'text-white');
+    
+            div.innerHTML = `
+                <p class="font-regular text-lg text-center px-2">Cantidad total de productos en el stock:</p>
+                <p class="font-regular text-lg text-center px-2">${totalProducts}</p>
+            `;
+            generalInfoContainer.append(div);
+        }
+
 
     } else if (button.textContent == 'Productos con stock bajo' && button.classList.contains('selected')) {
-        //renderizar la estructura donde van a ir los li que contendran a los productos
-        generalInfoContainer.innerHTML = `
-            <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
-                <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
-            </div>
-        `;
-
         //Filtrar y asignar a constantes todos los productos que esten bajo el umbral de alerta maxima
         const productsMinimumAlert = productsArray.filter(product => product.quantity <= product.alertAmounts[1] && product.quantity > product.alertAmounts[0]);
         const productsCriticAlert = productsArray.filter(product => product.quantity < product.alertAmounts[0]);
 
-        //En caso de que no existan productos bajo el umbral de alerta entonces se mostrara un mensaje y si no, se renderizaran los productos
-        if (!productsCriticAlert && !productsMinimumAlert) {
-            const li = document.createElement('li');
-            li.classList.add('w-[18%]', 'min-w-[10rem]', 'mb-4', 'rounded-xl', 'bg-white/20');
-            li.innerHTML = `<p class="flex justify-center items-center size-full p-2">Actualmente no hay productos con bajo stock</p>`;
-            generalInfoContainer.children[0].children[0].append(li);
+        if (productsMinimumAlert.length <= 0 && productsCriticAlert.length <= 0) {
+            //renderizar un mensaje informativo indicando que no hay ningun producto que deba ser repuesto
+            generalInfoContainer.innerHTML = `<div class="flex flex-wrap justify-center items-center w-full h-fit p-4 text-white"></div>`;
+
+            const span = document.createElement('span');
+            span.classList.add('font-regular', 'text-lg', 'text-center', 'px-2', 'size-full');
+            span.textContent = 'No existen productos con bajo stock';
+            generalInfoContainer.children[0].append(span);
 
         } else {
-            //Iterar sobre cada producto filtrado y renderizarlo para que se muestren en orden descendente en base a su fecha de entrada
-            productsMinimumAlert?.forEach(product => {
-                const li = document.createElement('li');
-                li.id = product.id;
-                li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/30', 'hover:bg-[#F23F3F]/40', 'hover:scale-105', 'transition-all');
-                li.innerHTML = `
-                    <button class="flex flex-col items-center size-full p-2">
-                        <p class="border-b-2 border-white/40 w-full pb-1">${product.name}</p>
-                        <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
-                        <p class="w-full pb-1">Cantidad: ${product.quantity} ${product.unit}</p>
-                    </button>
-                `;
-                generalInfoContainer.children[0].children[0].prepend(li);
+            //renderizar la estructura donde van a ir los li que contendran a los productos
+            generalInfoContainer.innerHTML = `
+                <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
+                    <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
+                </div>
+            `;
 
-                //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
-                li.addEventListener('click', e => {
-                    if (e.target.closest('li')) scrollToProduct(li.id);
-                    toggleGeneralInfo();
+            //En caso de que no existan productos bajo el umbral de alerta entonces se mostrara un mensaje y si no, se renderizaran los productos
+            if (!productsCriticAlert && !productsMinimumAlert) {
+                const li = document.createElement('li');
+                li.classList.add('w-[18%]', 'min-w-[10rem]', 'mb-4', 'rounded-xl', 'bg-white/20');
+                li.innerHTML = `<p class="flex justify-center items-center size-full p-2">Actualmente no hay productos con bajo stock</p>`;
+                generalInfoContainer.children[0].children[0].append(li);
+    
+            } else {
+                //Iterar sobre cada producto filtrado y renderizarlo para que se muestren en orden descendente en base a su fecha de entrada
+                productsMinimumAlert?.forEach(product => {
+                    const li = document.createElement('li');
+                    li.id = product.id;
+                    li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/30', 'hover:bg-[#F23F3F]/40', 'hover:scale-105', 'transition-all');
+                    li.innerHTML = `
+                        <button class="flex flex-col items-center size-full p-2">
+                            <p class="border-b-2 border-white/40 w-full pb-1">${product.name}</p>
+                            <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
+                            <p class="w-full pb-1">Cantidad: ${product.quantity} ${product.unit}</p>
+                        </button>
+                    `;
+                    generalInfoContainer.children[0].children[0].prepend(li);
+    
+                    //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
+                    li.addEventListener('click', e => {
+                        if (e.target.closest('li')) scrollToProduct(li.id);
+                        toggleGeneralInfo();
+                    });
                 });
-            });
+    
+                productsCriticAlert?.forEach(product => {
+                    const li = document.createElement('li');
+                    li.id = product.id;
+                    li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
+                    li.innerHTML = `
+                        <button class="flex flex-col items-center size-full p-2">
+                            <p class="border-b-2 border-white/40 w-full pb-1">${product.name}</p>
+                            <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
+                            <p class="w-full pb-1">Cantidad: ${product.quantity} ${product.unit}</p>
+                        </button>
+                    `;
+                    generalInfoContainer.children[0].children[0].prepend(li);
+    
+                    //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
+                    li.addEventListener('click', e => {
+                        if (e.target.closest('li')) scrollToProduct(li.id);
+                        toggleGeneralInfo();
+                    });
+                });
+            }
+        }
+    } else if (button.textContent == 'Productos mas vendidos' && button.classList.contains('selected')) {
+        //Extraer de la variable el top 3 de productos mas vendidos
+        const { top3 } = topBottomProducts;
 
-            productsCriticAlert?.forEach(product => {
+        //Renderizar un mensaje informativo en caso de que no se encuentren salidas registradas
+        if (!top3) {
+            //renderizar el contenedor y luego el mensaje
+            generalInfoContainer.innerHTML = `<div class="flex flex-wrap justify-center items-center w-full h-fit p-4 text-white"></div>`;
+
+            const span = document.createElement('span');
+            span.classList.add('font-regular', 'text-lg', 'text-center', 'px-2', 'size-full');
+            span.textContent = 'No se han registrado salidas en los últimos 30 días';
+            generalInfoContainer.children[0].append(span);
+
+        } else {
+            //renderizar la estructura donde van a ir los li que contendran a los productos
+            generalInfoContainer.innerHTML = `
+                <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
+                    <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
+                </div>
+            `;
+
+            top3.forEach(product => {
+                const productName = productsArray.find(item => item.code === product.code).name;
+    
                 const li = document.createElement('li');
                 li.id = product.id;
-                li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
+                li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-white/20', 'hover:bg-white/30', 'hover:scale-105', 'transition-all');
                 li.innerHTML = `
                     <button class="flex flex-col items-center size-full p-2">
-                        <p class="border-b-2 border-white/40 w-full pb-1">${product.name}</p>
+                        <p class="border-b-2 border-white/40 w-full pb-1">${productName}</p>
                         <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
-                        <p class="w-full pb-1">Cantidad: ${product.quantity} ${product.unit}</p>
+                        <p class="w-full pb-1">Salidas el ultimo mes: ${product.count}</p>
                     </button>
                 `;
-                generalInfoContainer.children[0].children[0].prepend(li);
-
+                generalInfoContainer.children[0].children[0].append(li);
+    
                 //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
                 li.addEventListener('click', e => {
                     if (e.target.closest('li')) scrollToProduct(li.id);
@@ -360,38 +428,6 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', async e => {
                 });
             });
         }
-    } else if (button.textContent == 'Productos mas vendidos' && button.classList.contains('selected')) {
-        //renderizar la estructura donde van a ir los li que contendran a los productos
-        generalInfoContainer.innerHTML = `
-            <div class="flex flex-wrap justify-center items-center w-full h-fit pt-2 pb-4 px-4 text-white">
-                <ul class="flex flex-wrap justify-center items-center gap-x-2 gap-y-0 w-full max-h-[55vh] overflow-y-auto"></ul>
-            </div>
-        `;
-
-        //Extraer de la variable el top 3 de productos mas vendidos
-        const { top3 } = topBottomProducts;
-
-        top3.forEach(product => {
-            const productName = productsArray.find(item => item.code === product.code).name;
-
-            const li = document.createElement('li');
-            li.id = product.id;
-            li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-white/20', 'hover:bg-white/30', 'hover:scale-105', 'transition-all');
-            li.innerHTML = `
-                <button class="flex flex-col items-center size-full p-2">
-                    <p class="border-b-2 border-white/40 w-full pb-1">${productName}</p>
-                    <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
-                    <p class="w-full pb-1">Salidas el ultimo mes: ${product.count}</p>
-                </button>
-            `;
-            generalInfoContainer.children[0].children[0].append(li);
-
-            //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
-            li.addEventListener('click', e => {
-                if (e.target.closest('li')) scrollToProduct(li.id);
-                toggleGeneralInfo();
-            });
-        });
     } else if (button.textContent == 'Productos menos vendidos' && button.classList.contains('selected')) {
         //renderizar la estructura donde van a ir los li que contendran a los productos
         generalInfoContainer.innerHTML = `
@@ -400,30 +436,42 @@ generalInfoBtn.parentElement.children[1].addEventListener('click', async e => {
             </div>
         `;
 
-        //Extraer de la variable el top 3 de productos mas vendidos
+        //Extraer de la variable el top 3 de productos menos vendidos si existen vendidos
         const { bottom3 } = topBottomProducts;
 
-        bottom3.forEach(product => {
-            const productName = productsArray.find(item => item.code === product.code).name;
+        if (!bottom3) {
+            //renderizar el contenedor y luego el mensaje
+            generalInfoContainer.innerHTML = `<div class="flex flex-wrap justify-center items-center w-full h-fit p-4 text-white"></div>`;
 
-            const li = document.createElement('li');
-            li.id = product.id;
-            li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
-            li.innerHTML = `
-                <button class="flex flex-col items-center size-full p-2">
-                    <p class="border-b-2 border-white/40 w-full pb-1">${productName}</p>
-                    <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
-                    <p class="w-full pb-1">Salidas el ultimo mes: ${product.count}</p>
-                </button>
-            `;
-            generalInfoContainer.children[0].children[0].append(li);
+            const span = document.createElement('span');
+            span.classList.add('font-regular', 'text-lg', 'text-center', 'px-2', 'size-full');
+            span.textContent = 'No se han regitrado suficientes salidas en los últimos 30 días para calcular';
+            generalInfoContainer.children[0].append(span);
 
-            //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
-            li.addEventListener('click', e => {
-                if (e.target.closest('li')) scrollToProduct(li.id);
-                toggleGeneralInfo();
+        } else {
+            bottom3.forEach(product => {
+                const productName = productsArray.find(item => item.code === product.code).name;
+    
+                const li = document.createElement('li');
+                li.id = product.id;
+                li.classList.add('w-[18%]', 'min-w-[10rem]', 'my-4', 'rounded-xl', 'bg-[#F23F3F]/70', 'hover:bg-[#F23F3F]/80', 'hover:scale-105', 'transition-all');
+                li.innerHTML = `
+                    <button class="flex flex-col items-center size-full p-2">
+                        <p class="border-b-2 border-white/40 w-full pb-1">${productName}</p>
+                        <p class="border-b-2 border-white/40 w-full pb-1">${product.code}</p>
+                        <p class="w-full pb-1">Salidas el ultimo mes: ${product.count}</p>
+                    </button>
+                `;
+                generalInfoContainer.children[0].children[0].append(li);
+    
+                //Agregar un evento de cliclk al li despues de crearlo en donde se llamara a una funcion encargada de hacer scroll hasta donde este el producto cliqueado
+                li.addEventListener('click', e => {
+                    if (e.target.closest('li')) scrollToProduct(li.id);
+                    toggleGeneralInfo();
+                });
             });
-        });
+        }
+
     } else if (button.children[0]) {
         toggleGeneralInfo();
     }

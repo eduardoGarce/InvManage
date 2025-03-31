@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvManage-Entries</title>
+    <title>InvManage-Sales</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -38,12 +38,12 @@
                 </form>
             </div>
         </div>
-        <!-- Modal para añadir productos -->
+        <!-- Modal para añadir salidas -->
         <div id="add-modal" class="fixed inset-0 z-40 bg-black/5 backdrop-blur-lg hidden">
             <div class="flex flex-col items-center justify-center gap-2 p-8 w-full h-full">
-                <p class="text-lg font-semibold text-center text-white fixed top-[30%] md:w-[80%] 2xl:w-[65%] md:z-31">Añada los datos de la salida</p>
                 <form id="add-form" class="flex flex-col justify-center w-full max-w-[80rem] xl:w-[98%] 2xl:w-[80%] h-4/5 rounded-3xl bg-transparent">
-                    <div id="list" class="flex flex-col items-center justify-center gap-2 py-4 md:py-0 md:mt-8 px-5 h-fit">
+                    <p class="text-lg font-semibold text-center text-white">Añada los datos de la salida</p>
+                    <div id="list" class="flex flex-col items-center justify-center gap-2 py-4 md:py-0 px-5 h-fit">
                         <div class="flex md:block flex-col items-center relative w-full max-w-[19rem] md:max-w-[34rem] h-fit px-6 py-4 text-white transition-all">
                             <input id="search-input-add" type="text" placeholder="Buscar por nombre o codigo" 
                                 class="peer w-2/3 focus:w-full h-full text-md font-regular text-center md:text-start focus:text-white px-2 py-1 border-b-2 border-white/70 focus:border-white overflow-x-hidden outline-none transition-all bg-transparent">
@@ -54,8 +54,8 @@
                             <select class="mb-6 min-h-8 w-full focus:scale-x-105 text-[#09041C] py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all"></select>
                             <select class="mb-6 min-h-8 w-full focus:scale-x-105 text-[#09041C] py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all"></select>
                             <div class="mb-6 max-h-8 w-full text-[#09041C]">
-                                <input type="number" min="1" placeholder="" id="quantity" class="peer w-full focus:scale-x-105 min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white [&::-webkit-inner-spin-button]:appearance-none outline-none transition-all">
-                                <label for="quantity" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Cantidad</label>
+                                <input type="number" min="1" placeholder="" id="quantity-add" class="peer w-full focus:scale-x-105 min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white [&::-webkit-inner-spin-button]:appearance-none outline-none transition-all">
+                                <label for="quantity-add" class="relative bottom-12 text-[#09041C] peer-placeholder-shown:bottom-7 peer-focus:bottom-12 peer-focus:text-sm bg-white rounded-full px-3 transition-all">Cantidad</label>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
             </div>
         </div>
         <!-- Nav -->
-        <nav id="navBar" class="flex items-center justify-end fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
+        <nav id="navBar" class="flex items-center justify-between fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
         <!-- SlideBar -->
         <div id="slideBar" class="md:h-16 md:mt-9 md:static px-6 w-full fixed bottom-10 z-20"></div>
         <!-- Informacion superior -->
@@ -89,7 +89,7 @@
         <div id="tables-container" class="flex flex-row flex-wrap justify-center h-[85%] md:h-[90%] w-full mt-6 md:mt-6 text-white overflow-y-auto [mask-image:linear-gradient(to_bottom,rgba(0,0,0,1)_70%,rgba(0,0,0,0))]">
         </div>
         <!-- Contenedor de la descripcion -->
-        <div id="description-container" class="z-30 absolute lg:bottom-[5%] xl: w-[95%] 2xl:w-[85%] h-36 rounded-3xl pb-4 pt-3 px-6 text-white/90 bg-gradient-to-br from-white/10 from-40% to-white/15 backdrop-blur-xl shadow-[0px_10px_10px_rgba(9,4,28,0.2)] transition-all">
+        <div id="description-container" class="z-30 absolute lg:bottom-[5%] xl: w-[90%] 2xl:w-[85%] h-36 rounded-3xl pb-4 pt-3 px-6 text-white/90 bg-gradient-to-br from-white/10 from-40% to-white/15 backdrop-blur-xl shadow-[0px_10px_10px_rgba(9,4,28,0.2)] transition-all">
             <p id="deskDescription" class="h-[75%] overflow-y-auto overflow-hidden transition-all">Seleccione un producto para ver su descripcion</p>
         </div>
         <!-- Footer o pie de pagina -->

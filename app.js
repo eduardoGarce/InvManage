@@ -31,13 +31,15 @@ app.use(express.json());
 
 //Rutas Fronted
 app.use('/', express.static(path.resolve('views', 'home')));
+app.use('/styles', express.static(path.resolve('views', 'styles')));
 app.use('/signup', express.static(path.resolve('views', 'signup')));
 app.use('/login', express.static(path.resolve('views', 'login')));
 app.use('/entries', express.static(path.resolve('views', 'entries')));
 app.use('/stock', express.static(path.resolve('views', 'stock')));
 app.use('/sales', express.static(path.resolve('views', 'sales')));
-app.use('/settings', express.static(path.resolve('views', 'settings')));
+app.use('/dashboard', express.static(path.resolve('views', 'dashboard')));
 app.use('/components', express.static(path.resolve('views', 'components')));
+app.use('/img', express.static(path.resolve('img')));
 app.use('/verify/:id/:token', express.static(path.resolve('views', 'verify')));
 
 app.use(morgan('tiny'));

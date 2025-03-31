@@ -11,7 +11,7 @@ form.addEventListener('submit', async e => {
             password: passwordInput.value
         }
         await axios.post('/api/login', user)
-        window.location.pathname = `/entries/`
+        window.location.pathname = `/dashboard/`
     } catch (error) {
         emailInput.classList.add('text-[#F23F3F]', 'border-[#F23F3F]');
         passwordInput.classList.add('text-[#F23F3F]', 'border-[#F23F3F]');

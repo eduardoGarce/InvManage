@@ -33,13 +33,11 @@ let productsArray = [];
 //Guarda el array de productos del stock
 let stockArray = [];
 
-//Se encarga de actualizar la variable listItems
-const listItemsUpdate = () => {
-    listItems = document.querySelectorAll('#list li');
-}
-
 //Se encarga de vaciar la ul del modal y solo deja un solo li con inputs vacios
-const resetList = (nameSelect, codeSelect, isAdd) => {
+const resetForm = (nameSelect, codeSelect, isAdd) => {
+    //Declarar una constante que almacenará el input de cantidad
+    const quantityInput = nameSelect.parentElement.children[2].children[0];
+
     //Añadir la opcion por defecto en cada input en caso de que se este limpiando el input de añadir salida
     if (isAdd) {
         nameSelect.innerHTML = `
@@ -48,6 +46,7 @@ const resetList = (nameSelect, codeSelect, isAdd) => {
         codeSelect.innerHTML = `
             <option value="default">Codigo</option>
         `;
+        quantityInput.value = '';
     }
 
     //Añadir los options tanto del input name como del input code
@@ -71,6 +70,10 @@ const resetList = (nameSelect, codeSelect, isAdd) => {
         for (const option of codeSelect.children) {
             if (productFound.code === option.value) {
                 option.selected = true;
+                //Si el valor del input es mayor a la cantidad del producto en stock entonces se limpia el input
+                if (quantityInput.value > productFound.quantity) quantityInput.value = '';
+                //Establecer una cantidad maxima para el input de cantidad en base a lo que queda en stock
+                quantityInput.max = productFound.quantity;
                 break;
             }
         }
@@ -82,6 +85,10 @@ const resetList = (nameSelect, codeSelect, isAdd) => {
         for (const option of nameSelect.children) {
             if (productFound.name === option.value) {
                 option.selected = true;
+                //Si el valor del input es mayor a la cantidad del producto en stock entonces se limpia el input
+                if (quantityInput.value > productFound.quantity) quantityInput.value = '';
+                //Establecer una cantidad maxima para el input de cantidad en base a lo que queda en stock
+                quantityInput.max = productFound.quantity;
                 break;
             }
         }
@@ -99,12 +106,13 @@ const activateEditBtn = () => {
             const nameSelect = editList.children[1].children[0];
             const codeSelect = editList.children[1].children[1];
             const quantityInput = editList.children[1].children[2].children[0];
-            resetList(nameSelect, codeSelect, isAdd = false);
+            resetForm(nameSelect, codeSelect, isAdd = false);
 
             //Seleccionar el id del producto
             const productId = phoneResolution ? e.target.closest('.edit-btn').parentElement.parentElement.parentElement.parentElement.id : e.target.closest('.edit-btn').parentElement.parentElement.id;
             productFound = productsArray.find(product => product.id === productId);
 
+            //Buscar entre todos los options cuales corresponden a la salida que se está editando y seleccionarlos
             for (const option of nameSelect.children) {
                 if (productFound.name === option.value) {
                     option.selected = true;
@@ -116,7 +124,10 @@ const activateEditBtn = () => {
                 }
             }
 
+            //Cargar la cantidad actual de la salida al input de cantidad 
             quantityInput.value = productFound.quantity;
+            //establecer un max en base a la cantidad del produto disponible en stock
+            quantityInput.max = stockArray.find(product => product.code === productFound.code).quantity;
         });
     });
 
@@ -279,72 +290,66 @@ const loadProducts = async (phoneResolution) => {
             activateEditBtn();
         }
     } catch (error) {
-        // window.location.pathname = '/login';
-        console.log(error);
+        window.location.pathname = '/login';
     }
 };
 
-//Esta funcion se encarga de agregarle los estilos y los mensajes a los inputs y las labels
-const validationStyles = (input, label) => {
-    const textLabel = label.textContent;
+//Esta funcion se encarga de agregarle los estilos y los mensajes de error a los inputs
+const validationStyles = (input, mesage) => {
+    const textBase = addform.children[0].textContent;
+    const textInformative = addform.children[0];
+    const inputsContainer = list.children[1];
+
+    //Asignar false a la variable que se va a encargar de almacenar si el formulario se puede enviar
     isValidForm = false;
 
-    if (label.innerHTML === 'Cantidad' || label.innerHTML === 'Precio uni.') {
-        const inputContainer = input.parentElement.parentElement;
-        const selectValue = inputContainer.children[1];
-        
-        label.innerHTML = 'Campo obligatorio';
-        label.classList.add('text-red-600');
-        selectValue.classList.add('text-red-600');
-        inputContainer.classList.add('ring-2', 'ring-red-600', 'focus:ring-red-600');
+    //Cambiar el texto superior y aplicar borde rojo a el input y el contenedor de los inputs
+    textInformative.textContent = mesage;
+    textInformative.classList.add('text-red-600');
+    input.classList.add('ring-2', 'ring-red-600', 'focus:ring-red-600');
+    inputsContainer.classList.add('ring-2', 'ring-red-600');
 
-        setTimeout(() => {
-            label.innerText = textLabel;
-            label.classList.remove('text-red-600');
-            selectValue.classList.remove('text-red-600');
-            inputContainer.classList.remove('ring-2', 'ring-red-600','focus:ring-red-600');
-        }, 5000);
-    } else {
-        label.innerHTML = 'Campo obligatorio';
-        label.classList.add('text-red-600');
-        input.classList.add('ring-2', 'ring-red-600', 'focus:ring-red-600');
-
-        setTimeout(() => {
-            label.innerText = textLabel;
-            label.classList.remove('text-red-600');
-            input.classList.remove('ring-2', 'ring-red-600','focus:ring-red-600');
-        }, 5000);
-    }
-
+    //Después de 5 segundos quitar todos los estilos de error
+    setTimeout(() => {
+        textInformative.textContent = textBase;
+        textInformative.classList.remove('text-red-600');
+        input.classList.remove('ring-2', 'ring-red-600', 'focus:ring-red-600');
+        inputsContainer.classList.remove('ring-2', 'ring-red-600');
+    }, 5000);
 };
 
 //Esta funcion se encarga de validar los inputs (que no estenvacios y que los inputs de cantidad y numero de alerta se validen con sus regex)
 const inputValidations = (li) => {
-    [ ...li.children ].forEach((container, index) => {
-        if (index === 0) return;
-        const input = container.children[0].tagName === 'DIV' ? container.children[0].children[0] : container.children[0];
-        const label = container.children[0].tagName === 'DIV' ? container.children[0].children[1] : container.children[1];
-        
-        if (!input.value && input.id != 'description') {
-            if (label) {
-                validationStyles(input, label);
-            }
-        } else if (input.id.includes('code')) { //Comprobar si el codigo esta repetido comparando el valor altual con los valores del array que contiene los codigos
-            if (codes.includes(input.value)) {
-                validationStyles(input, label);
-                label.innerHTML = 'Codigo repetido';
-            } else {
-                //Almacenar el valor alctual en el array que contiene los codigos para verificar que no esten repetidos en las siguientes iteraciones
-                codes.push(input.value);
-            }
-        }
-    });
+    const nameSelect = li.children[0];
+    const codeSelect = li.children[1];
+    const quantityInput = li.children[2].children[0];
+
+    //Buscar el producto correspondiente en stock para verificar que el producto exista
+    productFound = stockArray.find(product => product.code === codeSelect.value);
+
+    if (!nameSelect.value || !codeSelect.value || !quantityInput.value) {
+        //Iterar sobre cada input para detectar cual de ellos es el que esta vacio y pasarlo a validationStyles
+        for (const container of li.children) {
+            //Si el elemento de la iteracion tiene una hijo de tipo input enotonces se selecciona su hijo y en caso de no ser así se selecciona al mismo elemento
+            const input = container.children[0].tagName = 'INPUT' ? container.children[0] : container;
+            if (!input.value) validationStyles(input, 'Todos los campos son requeridos');;
+        };
+    } else if (!productFound) {
+        validationStyles(codeSelect, 'El producto no existe en stock');
+    } else if (productFound.name != nameSelect.value) {
+        validationStyles(nameSelect, 'El nombre del producto es incorrecto');
+    } else if (quantityInput.value > productFound.quantity) {
+        validationStyles(quantityInput, 'La cantidad de la salida exede la cantidad en stock');
+    }
 };
 
 //Encargada de extraer la informacion de los inputs y devolver un objeto con sus valores dependiendo el caso
 const infoExtractor = (container, purpose) => {
     switch (purpose) {
         case 'edit':
+            inputValidations(container);
+            if (!isValidForm)  return;
+
             const nameEdit = container.children[0].value;
             const codeEdit = container.children[1].value;
             console.log(container);
@@ -355,8 +360,6 @@ const infoExtractor = (container, purpose) => {
 
             const unitPriceEdit = stockProductEdit.unitPrice;
             const totalPriceEdit = quantityEdit * unitPriceEdit;
-
-            inputValidations(container);
             
             const editedProduct = {
                 nameEdit,
@@ -369,6 +372,9 @@ const infoExtractor = (container, purpose) => {
             return editedProduct;
 
         case 'add':
+            inputValidations(container);
+            if (!isValidForm)  return;
+
             const name = container.children[0].value;
             const code = container.children[1].value;
             const quantity = container.children[2].children[0].value;
@@ -381,8 +387,6 @@ const infoExtractor = (container, purpose) => {
             const currency = stockProduct.currency;
             const totalPrice = quantity * unitPrice;
             const description = stockProduct.description;
-
-            inputValidations(container);
 
             const product = {
                 name,
@@ -433,6 +437,7 @@ const searchAndDisplay = (input, value, productsFounds, productsList, inputsList
                         //seleccionar los inputs de nombre y codigo
                         const nameSelect = inputsList.children[1].children[0];
                         const codeSelect = inputsList.children[1].children[1];
+                        const quantityInput = inputsList.children[1].children[2].children[0];
 
                         //Añadir valores dependiendo de la seleccion de alguno de ellos
                         for (const option of codeSelect.children) {
@@ -445,6 +450,10 @@ const searchAndDisplay = (input, value, productsFounds, productsList, inputsList
                                 option.selected = true;
                             }
                         }
+                        //Si el valor del input es mayor a la cantidad del producto en stock entonces se limpia el input
+                        if (quantityInput.value > item.quantity) quantityInput.value = '';
+                        //Establecer una cantidad maxima para el input de cantidad en base a lo que queda en stock
+                        quantityInput.max = item.quantity;
                     } else {
                         //A partir del producto seleccionado del array de SALES, buscar a cual elemento html renderizado pertenece para hacer scroll hasta donde este
                         //Seleccionar la lista de productos renderizados en el HTML
@@ -563,7 +572,7 @@ tablesContainer.addEventListener('click', e => {
     }
 });
 
-//Enkvia todos los datos de los inputs a infoextractor para posteriormente enviarlos a la api
+//Envia todos los datos de los inputs a infoextractor para posteriormente enviarlos a la api
 editForm.addEventListener('submit', async e => {
     e.preventDefault();
 
@@ -604,7 +613,7 @@ openModalBtn.addEventListener('click', e => {
     const nameSelect = list.children[1].children[0];
     const codeSelect = list.children[1].children[1];
 
-    resetList(nameSelect, codeSelect, isAdd = true);
+    resetForm(nameSelect, codeSelect, isAdd = true);
 });
 
 //Cierra el modal de añadir salidas

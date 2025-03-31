@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InvManage-Stock</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles/output.css">
 </head>
 <body class="h-screen m-0">
     <!-- Colores: [#F23F3F] Rojo, [#09041C] Azul Oscuro, [#C23080] Violeta -->
@@ -104,11 +104,11 @@
             </div>
         </div>
         <!-- Nav -->
-        <nav id="navBar" class="flex items-center justify-end fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
+        <nav id="navBar" class="flex items-center justify-between fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
         <!-- SlideBar -->
         <div id="slideBar" class="md:h-16 md:mt-9 md:static px-6 w-full fixed bottom-10 z-20"></div>
         <!-- Informacion superior -->
-        <div class="flex flex-row justify-between h-[9%] min-h-8 md:h-[4%] w-full md:max-w-[60rem] py-6 md:py-0 min-h-16 md:min-h-4 gap-2 mt-3">
+        <div class="flex flex-row justify-between h-[9%] min-h-8 md:h-[4%] w-full md:max-w-[60rem] py-6 md:py-0 md:min-h-4 gap-2 mt-3">
             <div class="w-[40%] h-fit px-2 pb-0 overflow-y-hidden text-white transition-all">
                 <input id="search-input" type="text" placeholder="Buscar por nombre" 
                     class="peer w-full md:w-2/3 md:focus:w-full h-full text-md font-regular focus:text-white px-2 py-1 border-b-2 border-white/70 focus:border-white overflow-x-hidden outline-none transition-all bg-transparent">
@@ -137,7 +137,7 @@
         <div id="tables-container" class="flex flex-row flex-wrap justify-center h-[85%] md:h-[90%] w-full mt-6 md:mt-6 text-white overflow-y-auto [mask-image:linear-gradient(to_bottom,rgba(0,0,0,1)_70%,rgba(0,0,0,0))]">
         </div>
         <!-- Contenedor de la descripcion -->
-        <div id="description-container" class="z-30 absolute lg:bottom-[5%] xl: w-[95%] 2xl:w-[85%] h-36 rounded-3xl pb-4 pt-3 px-6 text-white/90 bg-gradient-to-br from-white/10 from-40% to-white/15 backdrop-blur-xl shadow-[0px_10px_10px_rgba(9,4,28,0.2)] transition-all">
+        <div id="description-container" class="z-30 absolute lg:bottom-[5%] xl: w-[90%] 2xl:w-[85%] h-36 rounded-3xl pb-4 pt-3 px-6 text-white/90 bg-gradient-to-br from-white/10 from-40% to-white/15 backdrop-blur-xl shadow-[0px_10px_10px_rgba(9,4,28,0.2)] transition-all">
             <p id="deskDescription" class="h-[75%] overflow-y-auto overflow-hidden transition-all">Seleccione un producto para ver su descripcion</p>
         </div>
         <!-- Footer o pie de pagina -->

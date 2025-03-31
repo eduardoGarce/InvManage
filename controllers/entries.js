@@ -1,5 +1,4 @@
 const entriesRouter = require('express').Router();
-const User = require('../models/user');
 const Entrie = require('../models/entrie');
 const Stock = require('../models/stock');
 
@@ -19,10 +18,24 @@ entriesRouter.post('/', async (request, response) => {
     if (products.length != 1) {
         for (const product of products) {
             const { name, code, lot, manufacturer, quantity, unit, unitPrice, currency, totalPrice, alertAmounts, description } = product;
+
             const quantityNumber = Number(quantity);
             const unitPriceNumber = Number(unitPrice);
             const totalPriceNumber = Number(totalPrice);
             const alertsNumber = alertAmounts.map(Number);
+
+            //Comprobar que todos los datos sean diferentes de null o undefine
+            if (!name || !code || !lot || !manufacturer || !quantity || !unit || !unitPrice || !currency || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2] || !description) {
+                return response.status(400).json({ error:'Todos los datos son requeridos' });
+            }
+            //Comprobar que los valores numericos sean diferentes de NaN
+            if (!quantityNumber || !unitPriceNumber || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2]) {
+                return response.status(400).json({ error:'El precio unitario, el precio total, la cantidad y los numeros de alerta deben ser números validos' });
+            }
+            //Comprobar que todos los valores numéricos sean mayores que 0
+            if (quantityNumber < 1 || unitPriceNumber < 1 || totalPrice < 1 || alertAmounts[0] < 1 || alertAmounts[1] < 1 || alertAmounts[2] < 1) {
+                return response.status(400).json({ error:'Los datos numéricos deben de ser valores positivos mayores que 0' });
+            }
 
             const newEntrie = new Entrie({
                 name,
@@ -77,10 +90,22 @@ entriesRouter.post('/', async (request, response) => {
         }
     } else {
         const { name, code, lot, manufacturer, quantity, unit, unitPrice, currency, totalPrice, alertAmounts, description } = products[0];
-            const quantityNumber = Number(quantity);
-            const unitPriceNumber = Number(unitPrice);
-            const totalPriceNumber = Number(totalPrice);
-            const alertsNumber = alertAmounts.map(Number);
+        const quantityNumber = Number(quantity);
+        const unitPriceNumber = Number(unitPrice);
+        const totalPriceNumber = Number(totalPrice);
+        const alertsNumber = alertAmounts.map(Number);
+
+        //Comprobar que todos los datos sean diferentes de null o undefine
+        if (!name || !code || !lot || !manufacturer || !quantity || !unit || !unitPrice || !currency || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2] || !description) {
+            return response.status(400).json({ error:'Todos los datos son requeridos' });
+        }
+        //Comprobar que los valores numericos sean diferentes de NaN
+        if (!quantityNumber || !unitPriceNumber || !totalPrice || !alertAmounts[0] || !alertAmounts[1] || !alertAmounts[2]) {
+            return response.status(400).json({ error:'El precio unitario, el precio total, la cantidad y los numeros de alerta deben ser números validos' });
+        }
+        if (quantityNumber < 1 || unitPriceNumber < 1 || totalPrice < 1 || alertAmounts[0] < 1 || alertAmounts[1] < 1 || alertAmounts[2] < 1) {
+            return response.status(400).json({ error:'Los datos numéricos deben de ser valores positivos mayores que 0' });
+        }
 
         const newEntrie = new Entrie({
             name,
@@ -144,6 +169,18 @@ entriesRouter.patch('/:id', async (request, response) => {
     const unitPriceNumber = Number(unitPriceEdit);
     const totalPriceNumber = Number(totalPriceEdit);
     const alertsNumber = alertAmountsEdit.map(Number);
+
+    //Comprobar que todos los datos sean diferentes de null o undefine
+    if (!nameEdit || !codeEdit || !lotEdit || !manufacturerEdit || !quantityEdit || !unitEdit || !unitPriceEdit || !currencyEdit || !totalPriceEdit || !alertAmountsEdit[0] || !alertAmountsEdit[1] || !alertAmountsEdit[2] || !descriptionEdit) {
+        return response.status(400).json({ error:'Todos los datos son requeridos' });
+    }
+    //Comprobar que los valores numericos sean diferentes de NaN
+    if (!quantityNumber || !unitPriceNumber || !totalPrice || !alertAmountsEdit[0] || !alertAmountsEdit[1] || !alertAmountsEdit[2]) {
+        return response.status(400).json({ error:'El precio unitario, el precio total, la cantidad y los numeros de alerta deben ser números validos' });
+    }
+    if (quantityNumber < 1 || unitPriceNumber < 1 || totalPrice < 1 || alertAmountsEdit[0] < 1 || alertAmountsEdit[1] < 1 || alertAmountsEdit[2] < 1) {
+        return response.status(400).json({ error:'Los datos numéricos deben de ser valores positivos mayores que 0' });
+    }
 
     const productOriginal = await Entrie.findById(id)
 

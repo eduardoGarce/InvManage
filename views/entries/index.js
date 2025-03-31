@@ -44,7 +44,7 @@ const listItemsUpdate = () => {
 //Se encarga de vaciar la ul del modal y solo deja un solo li con inputs vacios
 const resetList = () => {
     list.innerHTML = `
-        <li class="relative flex flex-col w-full max-w-[19rem] h-fit px-6 pb-4 pt-4 gap-x-4 bg-white/30 opacity-80 text-center rounded-xl md:flex-row md:flex-wrap md:max-w-[34rem]">
+        <li class="relative flex flex-col w-full max-w-[22rem] h-fit px-6 pb-4 pt-4 gap-x-4 bg-white/30 opacity-80 text-center rounded-xl md:flex-row md:flex-wrap md:max-w-[34rem]">
             <div class="absolute inset-0 z-10 bg-black bg-opacity-50 flex items-center justify-center text-white hidden"></div>
             <div class="mb-6 max-h-8 w-full md:max-w-[15rem] text-[#09041C]">
                 <input type="text" placeholder="" id="name" class="peer w-[95%] focus:w-full min-h-6 py-1 px-4 rounded-full bg-white border-2 border-white outline-none transition-all">
@@ -362,10 +362,7 @@ const loadProducts = async (phoneResolution) => {
             activateEditBtn();
         }
     } catch (error) {
-        // window.location.pathname = '/login';
-        console.log(error);
-        
-        
+        window.location.pathname = '/login';
     }
 };
 
@@ -681,7 +678,7 @@ addform.addEventListener('submit', async e => {
             //Se envia el array de productos a la api
             await axios.post('/api/entries', products);
             loadProducts(phoneResolution);
-            resetList();
+            resetForm();
             addModal.classList.add('hidden');
             productCount = 1;
         }
@@ -692,11 +689,6 @@ addform.addEventListener('submit', async e => {
     } catch (error) {
         console.log(error);
     }
-});
-
-//Lleva al usuario al modulo de configuracion
-settingsBtn.addEventListener('click', e => {
-    window.location.pathname = `/settings/`
 });
 
 //Añade un nuevo producto al formulario de registro de entradas

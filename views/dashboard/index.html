@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvManage-Dashboard</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/styles/output.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+</head>
+<body class="h-fit sm:h-screen min-h-screen m-0 bg-gradient-to-br from-[#09041C] from-40% to-[#C23080] bg-no-repeat font-lexend">
+    <!-- Nav -->
+    <nav id="navBar" class="flex items-center justify-between fixed top-0 left-0 right-0 h-12 px-6 lg:px-[10%] 2xl:px-[15%] bg-white/10 backdrop-blur-xl"></nav>
+    <!-- Contenedor de información principal -->
+    <main class="flex flex-col justify-center items-center align-middle pt-12 gap-4 min-h-screen sm:h-screen sm:overflow-y-auto">
+        <!-- Contenedor de links -->
+        <section class="text-white p-4 sm:p-6 max-w-3xl">
+            <h1 class="text-center font-bold text-lg mb-6">Gestione su inventario</h1>
+            <div class="flex flex-col items-center gap-y-6">
+                <div onclick="location.href='/entries'" role="link" tabindex="0" 
+                class="flex flex-col sm:flex-row items-center gap-2 p-4 hover:scale-105 bg-white/20 rounded-xl cursor-pointer transition-all">
+                    <svg class="size-20 stroke-white/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+                    </svg>
+                    <div class="flex flex-col gap-3 sm:px-4">
+                        <h2 class="text-center font-bold">ENTRADAS</h2>
+                        <p>Añada o edite las entradas de su inventario, cada entrada se verá reflejada en el stock.</p>
+                    </div>
+                </div>
+                <div onclick="location.href='/stock'" role="link" tabindex="0" 
+                class="flex flex-col sm:flex-row items-center gap-2 p-4 hover:scale-105 bg-white/20 rounded-xl cursor-pointer transition-all">
+                    <svg class="size-20 stroke-white/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 0 1-1.125-1.125v-3.75ZM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-8.25ZM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-2.25Z" />
+                    </svg>                      
+                    <div class="flex flex-col gap-3 sm:px-4">
+                        <h2 class="text-center font-bold">STOCK</h2>
+                        <p>Visualice todos los productos disponibles en su stock, el color alertará sobre los que tienen baja cantidad en stock.</p>
+                    </div>
+                </div>
+                <div onclick="location.href='/sales'" role="link" tabindex="0" 
+                class="flex flex-col sm:flex-row items-center gap-2 p-4 hover:scale-105 bg-white/20 rounded-xl cursor-pointer transition-all">
+                    <svg class="size-20 stroke-white/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                    </svg>
+                    <div class="flex flex-col gap-3 sm:px-4">
+                        <h2 class="text-center font-bold">SALIDAS</h2>
+                        <p>Registre o edite las salidas/ventas de su inventario, los productos se actualizarán en su stock.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Contenedor de alertas -->
+        <aside id="products-alerts-container" class="flex flex-col items-center p-4 text-white hidden">
+            <p class="p-2 sm:px-4 text-white mb-2 bg-[#F23F3F]/20 rounded-xl">Estos productos necesitan ser reabastecidos:</p>
+            <ul id="products-alerts-list" class="flex flex-wrap justify-center p-2 max-w-5xl sm:max-h-[12rem] overflow-hidden gap-2">
+            </ul>
+        </aside>
+    </main>
+    <footer class="relative sm:fixed bottom-0 h-10 w-full z-20 px-6 mt-10 text-white/80">
+        <div class="flex items-center justify-center w-full h-full text-center sm:text-left">
+            <p class="w-full">Desarrollado por Eduardo Garces</p>
+        </div>
+    </footer>
+    <!-- Scripts -->
+    <script src="/components/nav.js"></script>
+	<script src="index.js"></script>
+</body>
+</html>
