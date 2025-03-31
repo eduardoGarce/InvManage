@@ -674,11 +674,13 @@ addform.addEventListener('submit', async e => {
             if (typeof product != 'string') products.push(product);
         });
         
+        console.log(products);
+        
         if (isValidForm) {
             //Se envia el array de productos a la api
             await axios.post('/api/entries', products);
             loadProducts(phoneResolution);
-            resetForm();
+            resetList();
             addModal.classList.add('hidden');
             productCount = 1;
         }

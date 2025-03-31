@@ -72,7 +72,7 @@ salesRouter.post('/', async (request, response) => {
     const totalPriceNumber = Number(totalPrice);
 
     //Comprobar que todos los datos sean diferentes de null o undefine
-    if (!name || !code || !manufacturer || !quantity || !unit || !unitPrice || !currency || !totalPrice || !description) {
+    if (!name || !code || !manufacturer || !quantity || !unit || !unitPrice || !currency || !totalPrice) {
         return response.status(400).json({ error:'Todos los datos son requeridos' });
     }
     //Comprobar que los valores numericos sean diferentes de NaN
@@ -124,7 +124,7 @@ salesRouter.patch('/:id', async (request, response) => {
     const totalPriceNumber = Number(totalPriceEdit);
 
     //Comprobar que todos los datos sean diferentes de null o undefine
-    if (!nameEdit || !codeEdit || !lotEdit || !manufacturerEdit || !quantityEdit || !unitEdit || !unitPriceEdit || !currencyEdit || !totalPriceEdit || !alertAmountsEdit[0] || !alertAmountsEdit[1] || !alertAmountsEdit[2] || !descriptionEdit) {
+    if (!nameEdit || !codeEdit || !lotEdit || !manufacturerEdit || !quantityEdit || !unitEdit || !unitPriceEdit || !currencyEdit || !totalPriceEdit || !alertAmountsEdit[0] || !alertAmountsEdit[1] || !alertAmountsEdit[2]) {
         return response.status(400).json({ error:'Todos los datos son requeridos' });
     }
     //Comprobar que los valores numericos sean diferentes de NaN
