@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 loginRouter.post('/', async (request, response) => {
     const { email, password } = request.body;
+    email = email.toLowerCase();
     const userExist = await User.findOne({ email });
     
     if (!userExist) {
