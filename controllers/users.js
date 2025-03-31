@@ -7,13 +7,13 @@ const { PAGE_URL } = require('../config')
 
 usersRouter.post('/', async (request, response) => {
     const { name, email, password } = request.body;
-    email = email.toLowerCase();
 
     if (!name || !email || !password) {
         return response.status(400).json({error: 'Todos los espacios son requeridos'});
     }
 
-    const userExist = await User.findOne({ email });
+    const emailUpdate = email.toLowerCase();
+    const userExist = await User.findOne({ emailUpdate });
 
     if (userExist) {
         return response.status(400).json({ error: 'El email ya se encuentra en uso.'});

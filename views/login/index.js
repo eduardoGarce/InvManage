@@ -20,6 +20,7 @@ form.addEventListener('submit', async e => {
             passwordInput.classList.remove('text-[#F23F3F]', 'border-[#F23F3F]');
         }, 3000);
 
+        console.log(error);
         //Mostrar el texto de error y se expande el alto del texto de error
         errorText.innerHTML = error.response.data.error;
         errorText.classList.add('h-4');
