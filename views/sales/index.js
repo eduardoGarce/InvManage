@@ -352,7 +352,6 @@ const infoExtractor = (container, purpose) => {
 
             const nameEdit = container.children[0].value;
             const codeEdit = container.children[1].value;
-            console.log(container);
             const quantityEdit = container.children[2].children[0].value;
             
 
