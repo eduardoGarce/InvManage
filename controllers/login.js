@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 loginRouter.post('/', async (request, response) => {
     const { email, password } = request.body;
     const emailUpdate = email.toLowerCase();
-    const userExist = await User.findOne({ emailUpdate });
+    const userExist = await User.findOne({ email: emailUpdate });
     
     if (!userExist) {
         return response.status(400).json({ error:'email o contraseña invalido' });

@@ -13,7 +13,7 @@ usersRouter.post('/', async (request, response) => {
     }
 
     const emailUpdate = email.toLowerCase();
-    const userExist = await User.findOne({ emailUpdate });
+    const userExist = await User.findOne({ email: emailUpdate });
 
     if (userExist) {
         return response.status(400).json({ error: 'El email ya se encuentra en uso.'});
