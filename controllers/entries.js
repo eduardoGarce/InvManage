@@ -202,15 +202,20 @@ entriesRouter.patch('/:id', async (request, response) => {
 
     //Comprobar si el codigo fue editado para determinar si se deben eliminar o crear datos en la coleccion stock
     if (productOriginal.code === codeEdit) {
+        //Calcular la nueva cantidad del producto editado
+        const productStockOriginal = Stock.find({ code: codeEdit });
+        const quantityUpdate = (productStockOriginal.quantity - productOriginal.quantity) + quantityNumber;
+        const totalPriceUpdate = (productStockOriginal.totalPrice - productOriginal.totalPrice) + totalPriceNumber;
+
         //Actualizar datos datos del producto en el stock
         await Stock.findOneAndUpdate({ code: codeEdit }, {
             name: nameEdit,
             manufacturer: manufacturerEdit,
-            quantity: quantityNumber,
+            quantity: quantityUpdate,
             unit: unitEdit,
             unitPrice: unitPriceNumber,
             currency: currencyEdit,
-            totalPrice: totalPriceNumber, 
+            totalPrice: totalPriceUpdate, 
             alertAmounts: alertsNumber,
             description: descriptionEdit
         });
@@ -237,16 +242,20 @@ entriesRouter.patch('/:id', async (request, response) => {
             const matchingProductUpdate = await Stock.findOne({ code: productOriginal.code });
             if (matchingProductUpdate.quantity <= 0) await Stock.findOneAndDelete({ code: productOriginal.code })
         } else {
+            //Calcular la nueva cantidad del producto editado
+            const quantityUpdate = (lastMatchingProduct.quantity - productOriginal.quantity) + quantityEdit;
+            const totalPriceUpdate = (lastMatchingProduct.totalPrice - productOriginal.totalPrice) + totalPriceNumber;
+
             //En caso de no existir un producto que comparta el mismo codigo que el de la entrada editada entonces se actualiza el mismo producto en stock con todos los datos
             await Stock.findOneAndUpdate({ code: productOriginal.code }, {
                 name: nameEdit,
                 code: codeEdit, 
                 manufacturer: manufacturerEdit,
-                quantity: quantityNumber,
+                quantity: quantityUpdate,
                 unit: unitEdit,
                 unitPrice: unitPriceNumber,
                 currency: currencyEdit,
-                totalPrice: totalPriceNumber, 
+                totalPrice: totalPriceUpdate, 
                 alertAmounts: alertsNumber,
                 lastEntryDate: date,
                 description: descriptionEdit,
