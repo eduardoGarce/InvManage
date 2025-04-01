@@ -111,7 +111,7 @@ const activateEditBtn = () => {
             //Seleccionar el id del producto
             const productId = phoneResolution ? e.target.closest('.edit-btn').parentElement.parentElement.parentElement.parentElement.id : e.target.closest('.edit-btn').parentElement.parentElement.id;
             productFound = productsArray.find(product => product.id === productId);
-
+            
             //Buscar entre todos los options cuales corresponden a la salida que se está editando y seleccionarlos
             for (const option of nameSelect.children) {
                 if (productFound.name === option.value) {
@@ -130,7 +130,6 @@ const activateEditBtn = () => {
             quantityInput.max = stockArray.find(product => product.code === productFound.code).quantity;
         });
     });
-
 };
 
 //Funcion que se encarga de cargar todos los productos en las cards y renderizarlas
@@ -192,7 +191,7 @@ const loadProducts = async (phoneResolution) => {
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${product.totalPrice + ' ' + product.currency}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal border-white/40 border-r-2">${date}</td>
                     <td class="py-3 px-1 min-w-16 h-8 text-base font-normal ${i === 0 ? 'rounded-ee-3xl' : ''}">
-                        <button disabled class="edit-btn flex items-center justify-center relative z-20 h-full w-full m-auto disabled:opacity-40 disabled:hover:scale-100 hover:scale-110 transition-all">
+                        <button class="edit-btn flex items-center justify-center relative z-20 h-full w-full m-auto disabled:opacity-40 disabled:hover:scale-100 hover:scale-110 transition-all">
                             <svg class="stroke-white h-full w-full max-h-8 max-w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                             </svg>
@@ -267,7 +266,7 @@ const loadProducts = async (phoneResolution) => {
                         </tr>
                         <tr class="align-middle border-t-2 odd:bg-black/10 even:bg-black/0">
                             <td colspan="2" class="text-white font-semibold bg-[#09041C]/20 rounded-b-3xl">
-                                <button disabled class="edit-btn flex flex-row items-center justify-center h-8 w-full my-2 px-2 gap-2 mx-auto disabled:opacity-40 hover:scale-110 transition-all disabled">
+                                <button class="edit-btn flex flex-row items-center justify-center h-8 w-full my-2 px-2 gap-2 mx-auto disabled:opacity-40 hover:scale-110 transition-all disabled">
                                     <svg class="stroke-white max-h-8 max-w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                     </svg>
@@ -325,7 +324,7 @@ const inputValidations = (li) => {
     const quantityInput = li.children[2].children[0];
 
     //Buscar el producto correspondiente en stock para verificar que el producto exista
-    productFound = stockArray.find(product => product.code === codeSelect.value);
+    const productStockFound = stockArray.find(product => product.code === codeSelect.value);
 
     if (!nameSelect.value || !codeSelect.value || !quantityInput.value) {
         //Iterar sobre cada input para detectar cual de ellos es el que esta vacio y pasarlo a validationStyles
@@ -334,11 +333,11 @@ const inputValidations = (li) => {
             const input = container.children[0].tagName = 'INPUT' ? container.children[0] : container;
             if (!input.value) validationStyles(input, 'Todos los campos son requeridos');;
         };
-    } else if (!productFound) {
+    } else if (!productStockFound) {
         validationStyles(codeSelect, 'El producto no existe en stock');
-    } else if (productFound.name != nameSelect.value) {
+    } else if (productStockFound.name != nameSelect.value) {
         validationStyles(nameSelect, 'El nombre del producto es incorrecto');
-    } else if (quantityInput.value > productFound.quantity) {
+    } else if (quantityInput.value > productStockFound.quantity) {
         validationStyles(quantityInput, 'La cantidad de la salida exede la cantidad en stock');
     }
 };

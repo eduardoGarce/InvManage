@@ -134,9 +134,7 @@ salesRouter.patch('/:id', async (request, response) => {
         return response.status(400).json({ error:'Los datos numéricos deben de ser valores positivos mayores que 0' });
     }
     
-    // const productOriginal = await Sale.findOne({ code: codeEdit });
     const productOriginal = await Sale.findById(id);
-    console.log(productOriginal);
 
     //Extraer el producto del stock que corresponde a la salida
     const stockProduct = await Stock.find({code: codeEdit});
@@ -158,14 +156,14 @@ salesRouter.patch('/:id', async (request, response) => {
     //Si existe otro producto en stock que comparta el nuevo codigo de la salida editada actualizamos los datos del antiguo y del nuevo producto
     if (stockProduct) {
         //Actualizar la cantidad y el valor total del antiguo producto que compartia el mismo codigo original en stock
-        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: +productOriginal.quantity }, $inc: { totalPrice: +productOriginal.totalPrice }});
-        //Actualizar la cantidad y el valor total del producto que comparte el mismo codigo editado en stock
-        await Stock.findOneAndUpdate({ code: codeEdit }, { $inc: { quantity: -quantityNumber }, $inc: { totalPrice: -totalPriceNumber }, $get: { lastExitDate: date }});
+        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: +productOriginal.quantity, totalPrice: +productOriginal.totalPrice }});
+        //Actualizar la cantidad y el valor total del nuevo producto que comparte el mismo codigo editado en stock
+        await Stock.findOneAndUpdate({ code: codeEdit }, { $inc: { quantity: -quantityNumber, totalPrice: -totalPriceNumber }, $set: { lastExitDate: date }});
     } else {
-        //Sumar la cantidad original que le fue restada para llevarlo a la cantidad que tenia posterior a la salida
-        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: +productOriginal.quantity }, $inc: { totalPrice: +productOriginal.totalPrice }});
+        //Sumar la cantidad original que le fue restada para llevarlo a la cantidad que tenia antes de la salida
+        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: +productOriginal.quantity, totalPrice: +productOriginal.totalPrice }});
         //Restar a la cantidad y precio total del producto sus datos editados
-        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: -quantityNumber }, $inc: { totalPrice: -totalPriceNumber }, $get: { lastExitDate: date }});
+        await Stock.findOneAndUpdate({ code: productOriginal.code }, { $inc: { quantity: -quantityNumber, totalPrice: -totalPriceNumber }, $set: { lastExitDate: date }});
     }
 
     return response.sendStatus(200);
